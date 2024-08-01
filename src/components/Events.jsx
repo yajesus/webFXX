@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faMoneyBillWave,
@@ -7,8 +7,14 @@ import {
   faSquareShareNodes,
   faCrown,
 } from "@fortawesome/free-solid-svg-icons";
+import Recharge from "./Recharge";
 import { Link } from "react-router-dom";
+
 const Events = () => {
+  const [showrecharge, setShowrecharge] = useState(false);
+  function show() {
+    setShowrecharge(!showrecharge);
+  }
   return (
     <>
       <div className="w-100 flex">
@@ -30,7 +36,10 @@ const Events = () => {
               icon={faMoneyBillWave}
               className="text-5xl purple"
             />
-            <p class=" hover:text-blue-500 hover:underline cursor-pointer font-bold">
+            <p
+              class=" hover:text-blue-500 hover:underline cursor-pointer font-bold"
+              onClick={show}
+            >
               Recharge
             </p>
           </div>
@@ -89,6 +98,7 @@ const Events = () => {
             </Link>
           </div>
         </div>
+        {showrecharge ? <Recharge /> : ""}
       </div>
     </>
   );

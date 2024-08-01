@@ -24,6 +24,10 @@ code {
   border: 2px solid lightgray;
 }
 
+.withdrewborder {
+  border: 1px solid black;
+}
+
 .navcolor {
   color: white;
 }
@@ -47,4 +51,10 @@ code {
   to {
     -moz-transform: translateX(100%);
   }
+}
+
+.background_recharge {
+  background-color: rgba(0, 0, 0, 0.3);
+  /* Light transparent white background */
+  backdrop-filter: blur(4px);
 }
