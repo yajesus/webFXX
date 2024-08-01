@@ -7,7 +7,7 @@ const Main = () => {
         <div className="w-full flex justify-center mt-9">
           <h1 className="font-bold text-4xl ">Welcome</h1>
         </div>
-        <div>
+        <div className="mt-8">
           <Events />
         </div>
       </main>

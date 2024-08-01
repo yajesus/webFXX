@@ -23,3 +23,28 @@ code {
 .divsize {
   border: 2px solid lightgray;
 }
+
+.navcolor {
+  color: white;
+}
+
+.scroll-text {
+  text-align: right;
+
+
+  transform: translateX(-100%);
+
+
+  animation: my-animation 15s linear infinite;
+}
+
+/* for Firefox */
+@keyframes my-animation {
+  from {
+    -moz-transform: translateX(-100%);
+  }
+
+  to {
+    -moz-transform: translateX(100%);
+  }
+}
