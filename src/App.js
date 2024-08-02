@@ -14,6 +14,7 @@ import ChangePass from "./pages/profilepages/ChangePass";
 import Login from "./pages/mainpage/Login";
 import Register from "./pages/mainpage/Register";
 import FAQ from "./pages/FAQ";
+import Customerservice from "./pages/profilepages/Customerservice";
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   return (
@@ -43,6 +44,7 @@ const App = () => {
           <Route path="/Team" element={<Team />} />
           <Route path="/Changepass" element={<ChangePass />} />
           <Route path="/FAQ" element={<FAQ />} />
+          <Route path="/Customerservice" element={<Customerservice />} />
         </Route>
       </Routes>
     </div>

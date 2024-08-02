@@ -104,7 +104,7 @@ const Profile = () => {
                 <FontAwesomeIcon icon={faUser} className="text-4xl purple" />
               </div>
               <Link
-                to="/event"
+                to="/Customerservice"
                 class=" hover:text-blue-500 hover:underline font-bold "
               >
                 Customer Service
@@ -129,7 +129,7 @@ const Profile = () => {
                 />
               </div>
               <Link
-                to="/event"
+                to="/invitation"
                 class=" hover:text-blue-500 hover:underline font-bold "
               >
                 Invitation

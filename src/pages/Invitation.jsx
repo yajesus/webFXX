@@ -3,7 +3,7 @@ import React from "react";
 const Invitation = () => {
   return (
     <main>
-      <div className="w-full flex justify-center items-center flex-col">
+      <div className="w-full flex justify-center items-center flex-col mt-8">
         <div className="w-[60%] h-52 shadow-xl flex justify-center items-center mt-10 divsize rounded-xl">
           <p className="">Web FX</p>
         </div>
