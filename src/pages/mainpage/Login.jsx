@@ -1,7 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEye,
+  faEyeSlash,
+  faPhoneVolume,
+} from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 const Login = ({ setIsLoggedIn }) => {
   const [username, setUsername] = useState("");
@@ -30,11 +34,15 @@ const Login = ({ setIsLoggedIn }) => {
   };
   return (
     <main>
-      <div className="w-full h-full flex flex-col justify-center items-center absolute">
-        <div className="w-full flex justify-center ">
+      <div className="w-full h-full flex flex-col justify-center items-center ">
+        <div className="w-full flex  justify-center ">
           <p>Web fx</p>
         </div>
-        <div className="w-[80%]  md:w-[40%] lg:w-[30%] h-[64%] divsize rounded-md ">
+        <div className="flex justify-center w-full gap-2 items-center mt-7">
+          <FontAwesomeIcon icon={faPhoneVolume} className="text-xl" />
+          <span className="font-semibold">Contact us</span>
+        </div>
+        <div className="w-[80%]  md:w-[70%] lg:w-[30%] h-[400px] divsize rounded-md mt-10">
           <div className="w-full flex justify-center">
             <p className="text-4xl text-blue-600 font-bold mt-6">Login</p>
           </div>
@@ -94,6 +102,26 @@ const Login = ({ setIsLoggedIn }) => {
               </Link>
             </div>
           </form>
+        </div>
+        <div className="w-full flex mt-10">
+          <p className="ml-[150px]">Register Aggrement</p>
+        </div>
+        <div className="w-full flex gap-5 items-center">
+          <img
+            src={`${process.env.PUBLIC_URL}/google.jpg`}
+            alt="Logo"
+            className="w-[200px] h-[150px] ml-[250px]"
+          />
+          <img
+            src={`${process.env.PUBLIC_URL}/meta.jpg`}
+            alt="Logo"
+            className="w-[200px] h-[150px]"
+          />
+          <img
+            src={`${process.env.PUBLIC_URL}/binance.jpg`}
+            alt="Logo"
+            className="w-[200px] h-[190px]"
+          />
         </div>
       </div>
     </main>
