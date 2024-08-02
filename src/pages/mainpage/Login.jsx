@@ -35,12 +35,21 @@ const Login = ({ setIsLoggedIn }) => {
   return (
     <main>
       <div className="w-full h-full flex flex-col justify-center items-center ">
-        <div className="w-full flex  justify-center ">
-          <p>Web fx</p>
+        <div className="w-full h-12 flex  justify-center ">
+          <img
+            src={`${process.env.PUBLIC_URL}/logo.png`}
+            alt="Logo"
+            className="w-[200px] h-[190px]"
+          />
         </div>
-        <div className="flex justify-center w-full gap-2 items-center mt-7">
+        <div className="flex justify-center w-full gap-2 items-center mt-20">
           <FontAwesomeIcon icon={faPhoneVolume} className="text-xl" />
-          <span className="font-semibold">Contact us</span>
+          <Link
+            to="/invitation"
+            class=" hover:text-blue-500 hover:underline font-bold "
+          >
+            Contact Us
+          </Link>
         </div>
         <div className="w-[80%]  md:w-[70%] lg:w-[30%] h-[400px] divsize rounded-md mt-10">
           <div className="w-full flex justify-center">

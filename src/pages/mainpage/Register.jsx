@@ -1,6 +1,10 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import {
+  faEye,
+  faEyeSlash,
+  faPhoneVolume,
+} from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 const Register = () => {
   const [username, setUserName] = useState("");
@@ -42,11 +46,27 @@ const Register = () => {
   }
   return (
     <main>
-      <div className="w-full h-full flex flex-col justify-center items-center absolute">
-        <div className="w-full flex justify-center ">
-          <p>Web fx</p>
+      <div className="w-full h-full flex flex-col j items-center absolute">
+        <div className="w-full flex justify-center flex-col items-center  absolute">
+          <div className="w-full h-12 flex  justify-center ">
+            <img
+              src={`${process.env.PUBLIC_URL}/logo.png`}
+              alt="Logo"
+              className="w-[200px] h-[190px]"
+            />
+          </div>
+          <div className="flex justify-center w-full gap-2 items-center mt-20">
+            <FontAwesomeIcon icon={faPhoneVolume} className="text-xl" />
+            <Link
+              to="/invitation"
+              class=" hover:text-blue-500 hover:underline font-bold "
+            >
+              Contact Us
+            </Link>
+          </div>
         </div>
-        <div className="w-[80%]  md:w-[40%] lg:w-[30%] h-[100%] divsize rounded-md ">
+
+        <div className="w-[80%]  md:w-[40%] lg:w-[30%] h-[100%] divsize rounded-md mt-48 absolute">
           <div className="w-full flex justify-center">
             <p className="text-4xl text-blue-600 font-bold mt-6">Register</p>
           </div>
