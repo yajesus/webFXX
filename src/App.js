@@ -12,6 +12,7 @@ import BindWallet from "./pages/profilepages/BindWallet";
 import Team from "./pages/profilepages/Team";
 import ChangePass from "./pages/profilepages/ChangePass";
 import Login from "./pages/mainpage/Login";
+import Register from "./pages/mainpage/Register";
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   return (
@@ -21,6 +22,7 @@ const App = () => {
           path="/login"
           element={<Login setIsLoggedIn={setIsLoggedIn} />}
         />
+        <Route path="/Register" element={<Register />} />
         <Route
           path="/"
           element={isLoggedIn ? <Layout /> : <Navigate to="/login" />}

@@ -14,8 +14,11 @@ import { Link } from "react-router-dom";
 const Profile = () => {
   return (
     <main>
-      <div className="w-full h-full  absolute  mt-16 flex flex-col items-center gap-6">
-        <div className="w-[80%] h-14 rounded-lg bg-blue-950 flex justify-between items-center  -z-10">
+      <div
+        className="w-full h-[800px]  absolute  mt-16 flex flex-col items-center gap-6 z-10"
+        style={{ zIndex: 10, zIndexImportant: true }}
+      >
+        <div className="w-[80%] h-14 rounded-lg bg-blue-950 flex justify-between items-center  ">
           <p className="ml-5 text-white font-thin">10 USDT</p>
           <p className="mr-5 text-white font-thin">7 USDT</p>
         </div>
@@ -133,9 +136,11 @@ const Profile = () => {
               </Link>
             </div>
           </div>
-          <button className="w-[100%] h-24 bg-red-600  absolute ">
-            Log out
-          </button>
+          <div className="w-full flex justify-center ">
+            <button className="w-[60%] h-20 bg-red-600  absolute rounded-md text-white mt-5">
+              Log out
+            </button>
+          </div>
         </div>
       </div>
     </main>

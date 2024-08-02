@@ -10,12 +10,12 @@ const Footer = () => {
   return (
     <>
       <footer>
-        <div className="w-full h-24 bg-slate-900 bottom-0  fixed flex justify-around items-center z-40">
+        <div className="w-full h-20 bg-slate-900 bottom-0  fixed flex justify-between items-center z-40">
           <Link to="/event" class="  font-bold text-white">
             <div className="w-[150px] h-[100px]  flex flex-col justify-center items-center">
               <FontAwesomeIcon
                 icon={faHouseChimney}
-                className="text-5xl navcolor"
+                className="text-1xl md:text-4xl lg:text-5xl navcolor"
               />
               <p>Home</p>
             </div>
@@ -24,14 +24,17 @@ const Footer = () => {
             <div className="w-[150px] h-[100px]  flex flex-col justify-center items-center">
               <FontAwesomeIcon
                 icon={faBackwardFast}
-                className="text-5xl navcolor"
+                className="text-1xl md:text-4xl lg:text-5xl navcolor"
               />
               <p>Starting</p>
             </div>
           </Link>
           <Link to="/Profile" class="  font-bold text-white">
             <div className="w-[150px] h-[100px]  flex flex-col justify-center items-center">
-              <FontAwesomeIcon icon={faUser} className="text-5xl navcolor" />
+              <FontAwesomeIcon
+                icon={faUser}
+                className="text-1xl md:text-4xl lg:text-5xl navcolor"
+              />
               <p>Profile</p>
             </div>
           </Link>
