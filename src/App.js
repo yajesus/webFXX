@@ -13,6 +13,7 @@ import Team from "./pages/profilepages/Team";
 import ChangePass from "./pages/profilepages/ChangePass";
 import Login from "./pages/mainpage/Login";
 import Register from "./pages/mainpage/Register";
+import FAQ from "./pages/FAQ";
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   return (
@@ -41,6 +42,7 @@ const App = () => {
           <Route path="/Wallet" element={<BindWallet />} />
           <Route path="/Team" element={<Team />} />
           <Route path="/Changepass" element={<ChangePass />} />
+          <Route path="/FAQ" element={<FAQ />} />
         </Route>
       </Routes>
     </div>

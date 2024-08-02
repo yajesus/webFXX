@@ -15,7 +15,7 @@ const Profile = () => {
   return (
     <main>
       <div
-        className="w-full h-[800px]  absolute  mt-16 flex flex-col items-center gap-6 z-10"
+        className="w-full lg:h-[800px]  h-[100%] relative  mt-16 flex flex-col items-center gap-6 z-10"
         style={{ zIndex: 10, zIndexImportant: true }}
       >
         <div className="w-[80%] h-14 rounded-lg bg-blue-950 flex justify-between items-center  ">

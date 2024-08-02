@@ -6,6 +6,8 @@ import {
   faWallet,
   faSquareShareNodes,
   faCrown,
+  faCircleQuestion,
+  faBuilding,
 } from "@fortawesome/free-solid-svg-icons";
 import Recharge from "./Recharge";
 import { Link } from "react-router-dom";
@@ -65,10 +67,7 @@ const Events = () => {
             </Link>
           </div>
           <div className="w-[150px] h-[100px] rounded-md divsize flex flex-col justify-center items-center">
-            <FontAwesomeIcon
-              icon={faCalendarDays}
-              className="text-5xl purple"
-            />
+            <FontAwesomeIcon icon={faBuilding} className="text-5xl purple" />
             <Link
               to="/company"
               class=" hover:text-blue-500 hover:underline font-bold "
@@ -87,11 +86,11 @@ const Events = () => {
           </div>
           <div className="w-[150px] h-[100px] rounded-md divsize flex flex-col justify-center items-center">
             <FontAwesomeIcon
-              icon={faSquareShareNodes}
+              icon={faCircleQuestion}
               className="text-5xl purple"
             />
             <Link
-              to="/Tc"
+              to="/FAQ"
               class=" hover:text-blue-500 hover:underline font-bold "
             >
               FAQs

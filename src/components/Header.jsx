@@ -6,7 +6,7 @@ const Header = () => {
   return (
     <>
       <header>
-        <div className="w-full h-11 shadow-md fixed z-40 top-0">
+        <div className="w-full h-11 shadow-md bg-white fixed z-40 top-0">
           <div className="w-full h-full flex justify-between items-center z-40 relative">
             <p>Web FX</p>
             <div className="relative inline-block">
