@@ -17,7 +17,7 @@ const Events = () => {
   }
   return (
     <>
-      <div className="w-100 flex">
+      <div className="w-full  flex">
         <div class=" ml-[200px] grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-28 gap-y-10 ">
           <div className="w-[150px] h-[100px] rounded-md divsize flex flex-col justify-center items-center">
             <FontAwesomeIcon

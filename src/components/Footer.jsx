@@ -10,7 +10,7 @@ const Footer = () => {
   return (
     <>
       <footer>
-        <div className="w-full h-24 bg-slate-900 bottom-0  fixed flex justify-around items-center ">
+        <div className="w-full h-24 bg-slate-900 bottom-0  fixed flex justify-around items-center z-40">
           <Link to="/event" class="  font-bold text-white">
             <div className="w-[150px] h-[100px]  flex flex-col justify-center items-center">
               <FontAwesomeIcon
@@ -29,7 +29,7 @@ const Footer = () => {
               <p>Starting</p>
             </div>
           </Link>
-          <Link to="/event" class="  font-bold text-white">
+          <Link to="/Profile" class="  font-bold text-white">
             <div className="w-[150px] h-[100px]  flex flex-col justify-center items-center">
               <FontAwesomeIcon icon={faUser} className="text-5xl navcolor" />
               <p>Profile</p>
