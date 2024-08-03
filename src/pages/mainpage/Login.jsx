@@ -70,15 +70,15 @@ const Login = ({ setIsLoggedIn }) => {
               <div className="w-[full] flex flex-col justify-center items-center">
                 <input
                   type="password"
-                  className="w-[80%] h-10 divsize -ml-4 rounded-md p-4 focus:outline-blue-600 showpassword"
+                  className="w-[80%] h-10 divsize lg:-ml-4 md:-ml-12 rounded-md p-4 focus:outline-blue-600 showpassword"
                   placeholder="Password"
                   onChange={(e) => setPassword(e.target.value)}
                 />
-                <div className="w-[80%] flex justify-end  -mt-6">
+                <div className="w-[80%] flex justify-end  -mt-6 md:-ml-8">
                   {eyeshow ? (
                     <FontAwesomeIcon
                       icon={faEyeSlash}
-                      className="mr-5 cursor-pointer"
+                      className="mr-5 cursor-pointer md:-ml-14"
                       onClick={showeye}
                     />
                   ) : (
@@ -115,11 +115,11 @@ const Login = ({ setIsLoggedIn }) => {
         <div className="w-full flex mt-10">
           <p className="ml-[150px]">Register Aggrement</p>
         </div>
-        <div className="w-full flex gap-5 items-center">
+        <div className="w-full flex flex-col lg:flex-row justify-center lg:justify-start md:flex-row gap-5 items-center">
           <img
             src={`${process.env.PUBLIC_URL}/google.jpg`}
             alt="Logo"
-            className="w-[200px] h-[150px] ml-[250px]"
+            className="md:w-[200px] md:h-[150px] lg:w-[200px] lg:h-[150px] lg:ml-[250px] w-[400px] h-[250px]"
           />
           <img
             src={`${process.env.PUBLIC_URL}/meta.jpg`}
