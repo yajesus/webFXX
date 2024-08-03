@@ -5,7 +5,11 @@ const Invitation = () => {
     <main>
       <div className="w-full flex justify-center items-center flex-col mt-8">
         <div className="w-[60%] h-52 shadow-xl flex justify-center items-center mt-10 divsize rounded-xl">
-          <p className="">Web FX</p>
+          <img
+            src={`${process.env.PUBLIC_URL}/logo.png`}
+            alt="Logo"
+            className="w-[200px] h-[190px]"
+          />
         </div>
         <div className=" flex justify-center items-center flex-col gap-5 mt-6">
           <p className="font-bold text-xl">My Referral Code</p>
