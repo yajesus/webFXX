@@ -20,7 +20,7 @@ const Events = () => {
   return (
     <>
       <div className="w-full  flex items-center justify-center">
-        <div class=" grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-x-28 gap-y-10 ">
+        <div class=" grid grid-cols-1 sm:grid-cols-3 md:grid-cols-3 lg:grid-cols-4 gap-x-28 gap-y-10 ">
           <div className="w-[150px] h-[100px] rounded-md divsize flex flex-col justify-center items-center">
             <FontAwesomeIcon
               icon={faCalendarDays}
