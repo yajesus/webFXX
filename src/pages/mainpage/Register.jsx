@@ -15,6 +15,7 @@ const Register = () => {
   const [withdrawalPassword, setWithdrawalPassword] = useState("");
   const [invitationCode, setInvitationCode] = useState("");
   const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [withdrawalPasswordVisible, setWithdrawalPasswordVisible] =
     useState(false);
@@ -76,12 +77,15 @@ const Register = () => {
         }
       );
       // Handle success (e.g., redirect or show success message)
+      setSuccess("registered successfully");
+      setTimeout(() => setSuccess(""), 5000);
       console.log(response.data);
     } catch (err) {
       setError(
         err.response?.data.message || "An error occurred during registration."
       );
-      setTimeout(() => setError(""), 5000); // Clear error after 5 seconds
+      setTimeout(() => setError(""), 5000);
+      // Clear error after 5 seconds
     }
   };
 
@@ -116,7 +120,7 @@ const Register = () => {
             onSubmit={handleRegister}
           >
             {error && <p className="text-red-600">{error}</p>}
-
+            {success && <p className="text-green-500">{success}</p>}
             <div className="w-full flex flex-col">
               <label className="md:ml-6 ml-8 lg:ml-8">Username</label>
               <input

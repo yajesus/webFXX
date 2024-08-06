@@ -18,7 +18,7 @@ import Customerservice from "./pages/profilepages/Customerservice";
 import PrivateRoute from "./components/PrivateRoute";
 import AdminLogin from "./pages/Adminpage/Admin";
 import AdminDashboard from "./components/AdminDashboard";
-
+import NotFound from "./pages/NotFound";
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false); // Add state for admin check
@@ -61,6 +61,7 @@ const App = () => {
           <Route path="/faq" element={<FAQ />} />
           <Route path="/customerservice" element={<Customerservice />} />
         </Route>
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </div>
   );

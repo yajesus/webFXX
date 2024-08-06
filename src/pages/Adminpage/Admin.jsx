@@ -38,6 +38,7 @@ const AdminLogin = ({ setIsAdmin }) => {
           password,
         }
       );
+      console.log(response.data.token);
       localStorage.setItem("adminToken", response.data.token);
       setIsAdmin(true); // Set admin state to true
       navigate("/admin/dashboard"); // Redirect to admin dashboard

@@ -69,10 +69,7 @@ const Login = ({ setIsLoggedIn }) => {
         </div>
         <div className="flex justify-center w-full gap-2 items-center mt-20">
           <FontAwesomeIcon icon={faPhoneVolume} className="text-xl" />
-          <Link
-            to="/invitation"
-            className="hover:text-blue-500 hover:underline font-bold"
-          >
+          <Link className="hover:text-blue-500 hover:underline font-bold">
             Contact Us
           </Link>
         </div>
