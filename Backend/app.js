@@ -5,12 +5,22 @@ const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const User = require("./models/User");
 const session = require("./middlewares/session.js");
+const cors = require("cors");
 require("./models/User");
-const transactionsRoute = require("./models/Transaction.js");
+
+const transactionsRoute = require("./middlewares/transactions.js");
 dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 5000;
 
+// Use CORS middleware
+app.use(
+  cors({
+    origin: "http://localhost:3000", // Replace with your frontend URL
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -38,6 +48,7 @@ app.get("/users", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+app.use("/api", transactionsRoute);
 // Routes
 app.use("/api/auth", require("./routes/authRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));

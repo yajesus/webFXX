@@ -1,18 +1,35 @@
 const express = require("express");
 const router = express.Router();
 const adminController = require("../controllers/adminController");
+const { authenticateJWT, isAdmin } = require("../middlewares/authMiddleware");
 
-// Middleware to ensure user is admin
-const isAdmin = (req, res, next) => {
-  if (req.user && req.user.role === "admin") {
-    return next();
-  }
-  res.status(403).send("Forbidden");
-};
+router.post("/login", adminController.adminLogin);
 
-router.post("/add-event", isAdmin, adminController.addEvent);
-router.post("/add-product", isAdmin, adminController.addProduct);
-router.post("/edit-user-balance", isAdmin, adminController.editUserBalance);
-router.post("/approve-withdrawal", isAdmin, adminController.approveWithdrawal);
+// Protected admin routes
+router.post("/add-event", authenticateJWT, isAdmin, adminController.addEvent);
+router.post(
+  "/add-product",
+  authenticateJWT,
+  isAdmin,
+  adminController.addProduct
+);
+router.post(
+  "/edit-user-balance",
+  authenticateJWT,
+  isAdmin,
+  adminController.editUserBalance
+);
+router.post(
+  "/approve-withdrawal",
+  authenticateJWT,
+  isAdmin,
+  adminController.approveWithdrawal
+);
+router.post(
+  "/cancel-premium-product",
+  authenticateJWT,
+  isAdmin,
+  adminController.cancelPremiumProduct
+);
 
 module.exports = router;

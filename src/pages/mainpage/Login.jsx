@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faEye,
@@ -7,12 +8,45 @@ import {
   faPhoneVolume,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+
 const Login = ({ setIsLoggedIn }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const navigate = useNavigate();
+  const [error, setError] = useState("");
   const [eyeshow, setEyeshow] = useState(false);
-  function showeye() {
+  const navigate = useNavigate();
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+
+    // Input validation
+    if (!username || !password) {
+      setError("Username and password are required");
+      setTimeout(() => setError(""), 3000); // Clear error after 3 seconds
+      return;
+    }
+
+    try {
+      // API call for login
+      const response = await axios.post(
+        "http://localhost:5000/api/auth/login",
+        {
+          identifier: username,
+          password: password,
+        }
+      );
+
+      // Handle successful login
+      setIsLoggedIn(true);
+      navigate("/");
+    } catch (err) {
+      // Handle errors
+      setError(err.response?.data?.message || "Login failed");
+      setTimeout(() => setError(""), 3000); // Clear error after 3 seconds
+    }
+  };
+
+  const showeye = () => {
     const passwordInput = document.querySelector(".showpassword");
     if (passwordInput.type === "password") {
       passwordInput.type = "text";
@@ -21,21 +55,12 @@ const Login = ({ setIsLoggedIn }) => {
       setEyeshow(true);
       passwordInput.type = "password";
     }
-  }
-
-  const handleLogin = () => {
-    // Replace this with real authentication logic
-    if (username === "user" && password === "password") {
-      setIsLoggedIn(true);
-      navigate("/");
-    } else {
-      alert("Invalid credentials");
-    }
   };
+
   return (
     <main>
-      <div className="w-full h-full flex flex-col justify-center items-center ">
-        <div className="w-full h-12 flex  justify-center ">
+      <div className="w-full h-full flex flex-col justify-center items-center">
+        <div className="w-full h-12 flex justify-center">
           <img
             src={`${process.env.PUBLIC_URL}/logo.png`}
             alt="Logo"
@@ -46,22 +71,26 @@ const Login = ({ setIsLoggedIn }) => {
           <FontAwesomeIcon icon={faPhoneVolume} className="text-xl" />
           <Link
             to="/invitation"
-            class=" hover:text-blue-500 hover:underline font-bold "
+            className="hover:text-blue-500 hover:underline font-bold"
           >
             Contact Us
           </Link>
         </div>
-        <div className="w-[80%]  md:w-[70%] lg:w-[30%] h-[400px] divsize rounded-md mt-10">
+        <div className="w-[80%] md:w-[70%] lg:w-[30%] h-[400px] divsize rounded-md mt-10">
           <div className="w-full flex justify-center">
             <p className="text-4xl text-blue-600 font-bold mt-6">Login</p>
           </div>
-          <form className="w-full flex flex-col items-center mt-6 gap-3">
+          <form
+            className="w-full flex flex-col items-center mt-6 gap-3"
+            onSubmit={handleLogin}
+          >
             <div className="w-full flex flex-col">
               <label className="md:ml-6 ml-8 lg:ml-8">Username/Phone No</label>
               <input
                 type="text"
                 className="w-[80%] h-10 divsize md:ml-6 ml-8 lg:ml-8 rounded-md p-4 focus:outline-blue-600"
                 placeholder="Username/Phone No"
+                value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
             </div>
@@ -72,9 +101,10 @@ const Login = ({ setIsLoggedIn }) => {
                   type="password"
                   className="w-[80%] h-10 divsize lg:-ml-4 md:-ml-12 rounded-md p-4 focus:outline-blue-600 showpassword"
                   placeholder="Password"
+                  value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-                <div className="w-[80%] flex justify-end  -mt-6 md:-ml-8">
+                <div className="w-[80%] flex justify-end -mt-6 md:-ml-8">
                   {eyeshow ? (
                     <FontAwesomeIcon
                       icon={faEyeSlash}
@@ -91,7 +121,8 @@ const Login = ({ setIsLoggedIn }) => {
                 </div>
               </div>
             </div>
-            <div className="w-full ">
+            {error && <div className="text-red-500 mt-2">{error}</div>}
+            <div className="w-full">
               <p className="ml-8 text-blue-600 cursor-pointer">
                 Forgot Password?
               </p>
@@ -99,21 +130,21 @@ const Login = ({ setIsLoggedIn }) => {
             <div className="w-full flex justify-center">
               <button
                 className="w-[80%] h-10 bg-blue-600 rounded-md text-white"
-                onClick={handleLogin}
+                type="submit"
               >
                 Login
               </button>
             </div>
             <div className="w-full flex justify-center gap-2 mt-6">
               <p>Not registered yet?</p>
-              <Link className=" text-blue-600 cursor-pointer" to="/Register">
+              <Link className="text-blue-600 cursor-pointer" to="/Register">
                 Register Now
               </Link>
             </div>
           </form>
         </div>
         <div className="w-full flex mt-10">
-          <p className="ml-[150px]">Register Aggrement</p>
+          <p className="ml-[150px]">Register Agreement</p>
         </div>
         <div className="w-full flex flex-col lg:flex-row justify-center lg:justify-start md:flex-row gap-5 items-center">
           <img
