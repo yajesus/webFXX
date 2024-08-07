@@ -19,6 +19,8 @@ import PrivateRoute from "./components/PrivateRoute";
 import AdminLogin from "./pages/Adminpage/Admin";
 import AdminDashboard from "./components/AdminDashboard";
 import NotFound from "./pages/NotFound";
+import AddEvent from "./pages/Admin dashboard page/AddEvent";
+import AddProduct from "./pages/Admin dashboard page/AddProduct";
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false); // Add state for admin check
@@ -35,6 +37,14 @@ const App = () => {
           element={
             isAdmin ? <AdminDashboard /> : <Navigate to="/admin/login" />
           }
+        />
+        <Route
+          path="/admin/dashboard/addevent"
+          element={isAdmin ? <AddEvent /> : <Navigate to="/admin/login" />}
+        />
+        <Route
+          path="/admin/dashboard/addproduct"
+          element={isAdmin ? <AddProduct /> : <Navigate to="/admin/login" />}
         />
         <Route
           path="/login"

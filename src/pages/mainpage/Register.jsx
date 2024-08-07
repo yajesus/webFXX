@@ -6,8 +6,10 @@ import {
   faEyeSlash,
   faPhoneVolume,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
-
+import { Link, useNavigate } from "react-router-dom";
+import PhoneInput from "react-phone-number-input";
+import "react-phone-number-input/style.css";
+import validator from "validator";
 const Register = () => {
   const [username, setUserName] = useState("");
   const [phonenumber, setPhonenumber] = useState("");
@@ -20,6 +22,7 @@ const Register = () => {
   const [withdrawalPasswordVisible, setWithdrawalPasswordVisible] =
     useState(false);
   const [invitationCodeVisible, setInvitationCodeVisible] = useState(false);
+  const navigate = useNavigate();
 
   const handleVisibilityToggle = (type) => {
     if (type === "password") {
@@ -31,22 +34,20 @@ const Register = () => {
     }
   };
 
-  const validatePhoneNumber = (number) => {
-    const phoneRegex = /^[0-9]{10}$/; // Adjust regex as needed
-    return phoneRegex.test(number);
-  };
-
   const validatePassword = (password) => {
     // Password should be at least 8 characters long and contain a mix of letters, numbers, and symbols
     const passwordRegex = /^(?=.*[a-zA-Z])(?=.*\d)(?=.*[!@#$%^&*]).{8,}$/;
     return passwordRegex.test(password);
   };
 
+  const validatePhoneNumber = (number) => {
+    return validator.isMobilePhone(number, "any", { strictMode: false });
+  };
   const handleRegister = async (e) => {
     e.preventDefault();
     console.log(username, withdrawalPassword, phonenumber, invitationCode);
     if (!validatePhoneNumber(phonenumber)) {
-      setError("Invalid phone number. It should be 10 digits.");
+      setError("Invalid phone number.");
       setTimeout(() => setError(""), 5000); // Clear error after 5 seconds
       return;
     }
@@ -58,7 +59,13 @@ const Register = () => {
       setTimeout(() => setError(""), 5000); // Clear error after 5 seconds
       return;
     }
-
+    if (!validatePassword(withdrawalPassword)) {
+      setError(
+        "Withdrawal password is too weak. It should be at least 8 characters long and contain a mix of letters, numbers, and symbols."
+      );
+      setTimeout(() => setError(""), 5000); // Clear error after 5 seconds
+      return;
+    }
     if (!invitationCode) {
       setError("Invitation code is required.");
       setTimeout(() => setError(""), 5000); // Clear error after 5 seconds
@@ -69,17 +76,26 @@ const Register = () => {
       const response = await axios.post(
         "http://localhost:5000/api/auth/register",
         {
-          username: username, // CamelCase property
-          phoneNumber: phonenumber, // CamelCase property
-          password: password, // CamelCase property
-          withdrawalPassword: withdrawalPassword, // CamelCase property
-          invitationCode: invitationCode, // CamelCase property
+          username: username,
+          phoneNumber: phonenumber,
+          password: password,
+          withdrawalPassword: withdrawalPassword,
+          invitationCode: invitationCode,
         }
       );
       // Handle success (e.g., redirect or show success message)
-      setSuccess("registered successfully");
+      setSuccess("Registered successfully");
       setTimeout(() => setSuccess(""), 5000);
-      console.log(response.data);
+
+      // Clear input fields
+      setUserName("");
+      setPhonenumber("");
+      setPassword("");
+      setWithdrawalPassword("");
+      setInvitationCode("");
+
+      // Redirect to login page
+      setTimeout(() => navigate("/login"), 3000);
     } catch (err) {
       setError(
         err.response?.data.message || "An error occurred during registration."
@@ -127,17 +143,21 @@ const Register = () => {
                 type="text"
                 className="w-[80%] h-10 divsize md:ml-6 ml-8 lg:ml-8 rounded-md p-4 focus:outline-blue-600"
                 placeholder="Username"
+                value={username}
                 onChange={(e) => setUserName(e.target.value)}
               />
             </div>
 
             <div className="w-full flex flex-col">
               <label className="ml-8">Phone Number</label>
-              <input
-                type="text"
+              <PhoneInput
                 className="w-[80%] h-10 divsize ml-8 rounded-md p-4 focus:outline-blue-600"
+                international
+                countryCallingCodeEditable={false}
                 placeholder="Phone Number"
-                onChange={(e) => setPhonenumber(e.target.value)}
+                value={phonenumber}
+                onChange={setPhonenumber}
+                defaultCountry="US"
               />
             </div>
 
@@ -148,6 +168,7 @@ const Register = () => {
                   type={passwordVisible ? "text" : "password"}
                   className="w-[80%] h-10 divsize -ml-4 rounded-md p-4 focus:outline-blue-600"
                   placeholder="Password"
+                  value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
                 <div className="w-[80%] flex justify-end -mt-6">
@@ -167,6 +188,7 @@ const Register = () => {
                   type={withdrawalPasswordVisible ? "text" : "password"}
                   className="w-[80%] h-10 divsize -ml-4 rounded-md p-4 focus:outline-blue-600"
                   placeholder="Withdrawal Password"
+                  value={withdrawalPassword}
                   onChange={(e) => setWithdrawalPassword(e.target.value)}
                 />
                 <div className="w-[80%] flex justify-end -mt-6">
@@ -185,6 +207,7 @@ const Register = () => {
                 type="text"
                 className="w-[80%] h-10 divsize ml-8 rounded-md p-4 focus:outline-blue-600"
                 placeholder="Invitation Code"
+                value={invitationCode}
                 onChange={(e) => setInvitationCode(e.target.value)}
               />
             </div>
@@ -205,10 +228,10 @@ const Register = () => {
 
             <div className="w-full flex justify-center">
               <Link
-                className="w-[80%] h-10 bg-blue-600 rounded-md text-white flex justify-center items-center"
+                className="w-[80%] h-10 flex justify-center items-center text-blue-600 hover:underline"
                 to="/login"
               >
-                Back To Login
+                Have an Account? Log In
               </Link>
             </div>
           </form>

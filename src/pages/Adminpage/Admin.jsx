@@ -31,17 +31,18 @@ const AdminLogin = ({ setIsAdmin }) => {
     }
 
     try {
-      const response = await axios.post(
-        "http://localhost:5000/api/admin/login",
-        {
+      const response = await axios
+        .post("http://localhost:5000/api/admin/login", {
           email,
           password,
-        }
-      );
-      console.log(response.data.token);
-      localStorage.setItem("adminToken", response.data.token);
-      setIsAdmin(true); // Set admin state to true
-      navigate("/admin/dashboard"); // Redirect to admin dashboard
+        })
+        .then((response) => {
+          const token = response.data.token;
+          localStorage.setItem("adminToken", token);
+          console.log("your token", token);
+          setIsAdmin(true);
+          navigate("/admin/dashboard"); // Redirect to admin dashboard
+        });
     } catch (err) {
       setError("Invalid credentials");
       setTimeout(() => setError(""), 3000); // Clear error message after 3 seconds

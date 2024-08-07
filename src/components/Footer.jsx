@@ -10,7 +10,7 @@ const Footer = () => {
   return (
     <>
       <footer>
-        <div className="w-full h-20 bg-slate-900 bottom-0  fixed flex justify-between items-center z-40">
+        <div className="w-full h-10 md:h-14 lg:h-20 bg-slate-900 bottom-0  fixed flex justify-between items-center z-40">
           <Link to="/" class="  font-bold text-white">
             <div className="w-[150px] h-[100px]  flex flex-col justify-center items-center">
               <FontAwesomeIcon

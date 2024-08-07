@@ -4,22 +4,27 @@ const Product = require("../models/Product");
 const User = require("../models/User");
 const Transaction = require("../models/Transaction");
 const { generateToken } = require("../utils/jwt");
-
+const jwt = require("jsonwebtoken");
 exports.adminLogin = async (req, res) => {
   const { email, password } = req.body;
   try {
     const admin = await Admin.findOne({ email });
-    console.log(email, password);
+    console.log("Login request received with email:", email);
     if (!admin) {
       return res.status(400).json({ message: "Admin not found" });
     }
-
+    console.log("Admin found, verifying password");
     const isMatch = await admin.verifyPassword(password);
     if (!isMatch) {
+      console.log("Invalid password");
       return res.status(400).json({ message: "Invalid password" });
     }
+    console.log("Password verified, generating token");
+    const token = jwt.sign({ id: admin._id }, process.env.JWT_SECRET, {
+      expiresIn: "24h",
+    });
 
-    const token = generateToken(admin);
+    console.log("Token generated successfully");
     res.status(200).json({ admin, token });
   } catch (err) {
     res.status(500).json({ message: err.message });

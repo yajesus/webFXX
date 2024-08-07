@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema({
   invitationCode: { type: String, unique: true },
   referredUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   walletAddress: { type: String },
-  role: { type: String, default: "user", enum: ["user", "admin"] }, // Added role field
+
   createdAt: { type: Date, default: Date.now },
 });
 

@@ -1,34 +1,29 @@
 const express = require("express");
 const router = express.Router();
 const adminController = require("../controllers/adminController");
-const { authenticateJWT, isAdmin } = require("../middlewares/authMiddleware");
+const authenticateAndAdmin = require("../middlewares/authMiddleware");
 
 router.post("/login", adminController.adminLogin);
 
 // Protected admin routes
-router.post("/add-event", authenticateJWT, isAdmin, adminController.addEvent);
-router.post(
-  "/add-product",
-  authenticateJWT,
-  isAdmin,
-  adminController.addProduct
-);
+router.post("/add-event", authenticateAndAdmin, adminController.addEvent);
+router.post("/add-product", authenticateAndAdmin, adminController.addProduct);
 router.post(
   "/edit-user-balance",
-  authenticateJWT,
-  isAdmin,
+  authenticateAndAdmin,
+
   adminController.editUserBalance
 );
 router.post(
   "/approve-withdrawal",
-  authenticateJWT,
-  isAdmin,
+  authenticateAndAdmin,
+
   adminController.approveWithdrawal
 );
 router.post(
   "/cancel-premium-product",
-  authenticateJWT,
-  isAdmin,
+  authenticateAndAdmin,
+
   adminController.cancelPremiumProduct
 );
 
