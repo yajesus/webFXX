@@ -7,7 +7,7 @@ exports.submitTask = async (req, res) => {
   try {
     const user = await User.findById(userId);
     const product = await Product.findById(productId);
-
+    console.log("incoming user:", user.username);
     if (product.isPremium && !product.visibleTo.includes(userId)) {
       return res.status(403).send("Not authorized to access premium product");
     }

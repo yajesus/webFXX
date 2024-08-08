@@ -10,6 +10,7 @@ import {
 import { Link } from "react-router-dom";
 
 const Login = ({ setIsLoggedIn }) => {
+  const [identifier, setIdentifier] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
@@ -21,7 +22,7 @@ const Login = ({ setIsLoggedIn }) => {
 
     // Input validation
     if (!username || !password) {
-      setError("Username and password are required");
+      setError("Username/phonenumber and password are required");
       setTimeout(() => setError(""), 3000); // Clear error after 3 seconds
       return;
     }
@@ -48,8 +49,7 @@ const Login = ({ setIsLoggedIn }) => {
         throw new Error("Invalid response format");
       }
     } catch (err) {
-      // Handle errors
-      setError(err.response?.data?.message || "Login failed");
+      setError(err.response.data.message || "Login Failed");
       setTimeout(() => setError(""), 3000); // Clear error after 3 seconds
     }
   };

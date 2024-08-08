@@ -6,7 +6,7 @@ const UserSchema = new mongoose.Schema({
   phoneNumber: { type: String, unique: true, sparse: true, required: true },
   password: { type: String, required: true },
   withdrawalPassword: { type: String, required: true }, // Added withdrawalPassword field
-  balance: { type: Number, default: 0 },
+  balance: { type: Number, default: 30 },
   invitationCode: { type: String, unique: true },
   referredUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   walletAddress: { type: String },

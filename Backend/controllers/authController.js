@@ -105,6 +105,8 @@ exports.login = [
 
       // Check password
       const isMatch = await bcrypt.compare(password, user.password);
+
+      console.log("user", isMatch);
       if (!isMatch) {
         return res.status(400).json({ message: "Incorrect password" });
       }

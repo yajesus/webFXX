@@ -5,14 +5,15 @@ const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const User = require("./models/User");
 const Product = require("./models/Product.js");
-const session = require("./middlewares/session.js");
+
 const path = require("path");
 const cors = require("cors");
-const productmiddleware = require("./middlewares/productsmiddleware.js");
+dotenv.config();
+const productsmiddleware = require("./middlewares/productsmiddleware.js");
 require("./models/User");
 
 const transactionsRoute = require("./middlewares/transactions.js");
-dotenv.config();
+
 const app = express();
 const PORT = process.env.PORT || 5000;
 
@@ -30,9 +31,8 @@ app.use(
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(session);
+
 app.use(passport.initialize());
-app.use(passport.session());
 
 // Database connection
 mongoose
@@ -54,7 +54,7 @@ app.get("/users", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
-app.get("/api/products", productmiddleware, async (req, res) => {
+app.get("/api/products", productsmiddleware, async (req, res) => {
   const userId = req.user.id;
   try {
     const products = await Product.find({
