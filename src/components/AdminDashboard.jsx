@@ -25,7 +25,10 @@ const AdminDashboard = () => {
             </Link>
           </div>
           <div className="w-[350px] h-[200px] divsize bg-blue-500 flex items-center justify-center">
-            <Link class=" text-white hover:underline font-bold text-3xl">
+            <Link
+              class=" text-white hover:underline font-bold text-3xl"
+              to="/admin/dashboard/edituserbalance"
+            >
               Edit User Balance
             </Link>
           </div>

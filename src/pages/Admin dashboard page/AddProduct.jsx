@@ -1,19 +1,42 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const AddProduct = () => {
-  // State for form fields
   const [name, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [image, setImage] = useState(null); // Changed to handle file
+  const [image, setImage] = useState(null); // Handle file upload
   const [price, setPrice] = useState("");
   const [profit, setProfit] = useState("");
   const [isPremium, setIsPremium] = useState(false);
-  const [visibleTo, setVisibleTo] = useState("");
+  const [visibleTo, setVisibleTo] = useState([]); // Adjusted to array
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
+  const [allUsers, setAllUsers] = useState([]);
+  const [selectedUsers, setSelectedUsers] = useState([]);
   const token = localStorage.getItem("adminToken");
-  // Handle form submission
+  useEffect(() => {
+    // Fetch all users on component mount
+    const fetchUsers = async () => {
+      try {
+        const response = await axios
+          .get("http://localhost:5000/users")
+          .then((response) => setAllUsers(response.data));
+      } catch (err) {
+        console.error("Error fetching users:", err);
+      }
+    };
+
+    fetchUsers();
+  }, []);
+
+  const handleUserChange = (e) => {
+    const { value, checked } = e.target;
+    setSelectedUsers((prevSelected) =>
+      checked
+        ? [...prevSelected, value]
+        : prevSelected.filter((id) => id !== value)
+    );
+  };
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -23,38 +46,44 @@ const AddProduct = () => {
     formData.append("price", price);
     formData.append("profit", profit);
     formData.append("isPremium", isPremium);
-    formData.append("visibleTo", visibleTo);
+    const visibleTo = selectedUsers.includes("all")
+      ? "all"
+      : JSON.stringify(selectedUsers);
+    formData.append("visibleTo", visibleTo); // Convert array to JSON string
     if (image) {
       formData.append("image", image); // Append image file
     }
 
     try {
-      const token = localStorage.getItem("adminToken");
-      if (!token) {
-        console.log("there is no token");
-      } else {
-        console.log("there is token");
-      }
       const response = await axios.post(
-        "http://localhost:5000/api/admin/add-product", // Replace with your API endpoint
+        "http://localhost:5000/api/admin/add-product",
         formData,
         {
           headers: {
             "Content-Type": "multipart/form-data",
-            authorization: `Bearer ${token}`, // Set header for file upload
+            authorization: `Bearer ${token}`,
           },
         }
       );
 
-      // Handle success
       setSuccess("Product added successfully!");
       setError(""); // Clear error if any
       console.log(response.data);
+
+      setTimeout(() => {
+        setSuccess(""); // Clear success message after 5 seconds
+      }, 5000);
     } catch (err) {
-      // Handle error
-      setError("An error occurred while adding the product.");
+      setError(
+        err.response?.data?.message ||
+          "An error occurred while adding the product."
+      );
       setSuccess(""); // Clear success message if any
       console.error(err);
+
+      setTimeout(() => {
+        setError(""); // Clear error message after 5 seconds
+      }, 5000);
     }
   };
 
@@ -91,9 +120,9 @@ const AddProduct = () => {
           <label className="block mb-2">Image:</label>
           <input
             type="file"
-            onChange={(e) => setImage(e.target.files[0])} // Update image state
+            onChange={(e) => setImage(e.target.files[0])}
             className="w-full p-2 border rounded"
-            accept="image/*" // Accept only image files
+            accept="image/*"
             required
           />
         </div>
@@ -132,18 +161,36 @@ const AddProduct = () => {
 
         <div>
           <label className="block mb-2">Visible To:</label>
-          <select
-            value={visibleTo}
-            onChange={(e) => setVisibleTo(e.target.value)}
-            className="w-full p-2 border rounded"
-            required
-          >
-            <option value="">Select user group</option>
-            <option value="all">All Users</option>
-            <option value="registered">Registered Users</option>
-            <option value="premium">Premium Users</option>
-            {/* Add more options as needed */}
-          </select>
+          <div className="flex flex-col gap-2">
+            {allUsers.map((user) => (
+              <label key={user._id} className="flex items-center">
+                <input
+                  type="checkbox"
+                  value={user._id}
+                  checked={selectedUsers.includes(user._id)}
+                  onChange={handleUserChange}
+                  className="mr-2"
+                />
+                {user.username} {/* Adjust field as per your User schema */}
+              </label>
+            ))}
+            <label className="flex items-center">
+              <input
+                type="checkbox"
+                value="all"
+                checked={selectedUsers.includes("all")}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setSelectedUsers(["all"]);
+                  } else {
+                    setSelectedUsers([]);
+                  }
+                }}
+                className="mr-2"
+              />
+              All Users
+            </label>
+          </div>
         </div>
 
         <button

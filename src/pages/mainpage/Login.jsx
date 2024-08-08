@@ -36,9 +36,17 @@ const Login = ({ setIsLoggedIn }) => {
         }
       );
 
-      // Handle successful login
-      setIsLoggedIn(true);
-      navigate("/");
+      // Extract the user ID and token from the response
+      const { userId, token } = response.data;
+
+      if (userId && token) {
+        localStorage.setItem("userId", userId); // Store userId
+        localStorage.setItem("token", token); // Store token
+        setIsLoggedIn(true);
+        navigate("/");
+      } else {
+        throw new Error("Invalid response format");
+      }
     } catch (err) {
       // Handle errors
       setError(err.response?.data?.message || "Login failed");

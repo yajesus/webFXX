@@ -7,7 +7,7 @@ const ProductSchema = new mongoose.Schema({
   price: { type: Number, required: true },
   profit: { type: Number, required: true },
   isPremium: { type: Boolean, default: false },
-  visibleTo: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }], // Users who can see the premium product
+  visibleTo: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   createdAt: { type: Date, default: Date.now },
 });
 

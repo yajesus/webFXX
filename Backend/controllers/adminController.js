@@ -3,8 +3,9 @@ const Event = require("../models/Event");
 const Product = require("../models/Product");
 const User = require("../models/User");
 const Transaction = require("../models/Transaction");
-const { generateToken } = require("../utils/jwt");
+const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+const mongoose = require("mongoose");
 exports.adminLogin = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -13,8 +14,9 @@ exports.adminLogin = async (req, res) => {
     if (!admin) {
       return res.status(400).json({ message: "Admin not found" });
     }
-    console.log("Admin found, verifying password");
-    const isMatch = await admin.verifyPassword(password);
+
+    const isMatch = await bcrypt.compare(password, admin.password);
+    console.log("Admin found, verifying password", isMatch);
     if (!isMatch) {
       console.log("Invalid password");
       return res.status(400).json({ message: "Invalid password" });
@@ -43,9 +45,25 @@ exports.addEvent = async (req, res) => {
 };
 
 exports.addProduct = async (req, res) => {
-  const { name, description, image, price, profit, isPremium, visibleTo } =
-    req.body;
+  const { name, description, price, profit, isPremium, visibleTo } = req.body;
+  const image = req.file ? req.file.path : null; // Handle image file
+
+  if (!name || !description || !image || !price || !profit) {
+    return res
+      .status(400)
+      .json({ message: "All required fields must be provided" });
+  }
   try {
+    let visibleToArray;
+    if (visibleTo === "all") {
+      const allUsers = await User.find({}, "_id"); // Fetch all user IDs
+      visibleToArray = allUsers.map((user) => user._id);
+    } else {
+      visibleToArray = JSON.parse(visibleTo).map(
+        (id) => new mongoose.Types.ObjectId(id)
+      );
+    }
+    console.log("Visible To Array:", visibleToArray);
     const product = new Product({
       name,
       description,
@@ -53,11 +71,12 @@ exports.addProduct = async (req, res) => {
       price,
       profit,
       isPremium,
-      visibleTo,
+      visibleTo: visibleToArray,
     });
     await product.save();
     res.status(201).send(product);
   } catch (err) {
+    console.error("Error adding product:", err);
     res.status(500).json({ message: err.message });
   }
 };
@@ -66,6 +85,9 @@ exports.editUserBalance = async (req, res) => {
   const { userId, amount } = req.body;
   try {
     const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
     user.balance += amount;
     await user.save();
     res.status(200).send(user);

@@ -1,15 +1,26 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 const AdminLogin = ({ setIsAdmin }) => {
   // Accept setIsAdmin prop
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [eyeshow, setEyeshow] = useState(false);
   const [formError, setFormError] = useState(""); // To track form validation errors
   const navigate = useNavigate();
-
+  const showeye = () => {
+    const passwordInput = document.querySelector(".showpassword");
+    if (passwordInput.type === "password") {
+      passwordInput.type = "text";
+      setEyeshow(false);
+    } else {
+      setEyeshow(true);
+      passwordInput.type = "password";
+    }
+  };
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -44,7 +55,9 @@ const AdminLogin = ({ setIsAdmin }) => {
           navigate("/admin/dashboard"); // Redirect to admin dashboard
         });
     } catch (err) {
-      setError("Invalid credentials");
+      const backendError =
+        err.response?.data?.message || "An unexpected error occurred";
+      setError(backendError);
       setTimeout(() => setError(""), 3000); // Clear error message after 3 seconds
     }
   };
@@ -82,10 +95,25 @@ const AdminLogin = ({ setIsAdmin }) => {
             <label className="md:ml-6 ml-8 lg:ml-8">Password</label>
             <input
               type="password"
-              className="w-[80%] h-10 divsize md:ml-6 ml-8 lg:ml-8 rounded-md p-4 focus:outline-blue-600"
+              className="w-[80%] h-10 divsize md:ml-6 ml-8 lg:ml-8 rounded-md p-4 focus:outline-blue-600 showpassword"
               placeholder="Password"
               onChange={(e) => setPassword(e.target.value)}
             />
+            <div className="w-[80%] flex justify-end -mt-6 ">
+              {eyeshow ? (
+                <FontAwesomeIcon
+                  icon={faEyeSlash}
+                  className="mr-5 cursor-pointer md:-ml-10"
+                  onClick={showeye}
+                />
+              ) : (
+                <FontAwesomeIcon
+                  icon={faEye}
+                  className="mr-5 cursor-pointer"
+                  onClick={showeye}
+                />
+              )}
+            </div>
           </div>
           {formError && (
             <div className="w-full flex justify-center mt-2 text-red-600">

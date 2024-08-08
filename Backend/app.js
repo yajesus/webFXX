@@ -4,8 +4,11 @@ const passport = require("passport");
 const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const User = require("./models/User");
+const Product = require("./models/Product.js");
 const session = require("./middlewares/session.js");
+const path = require("path");
 const cors = require("cors");
+const productmiddleware = require("./middlewares/productsmiddleware.js");
 require("./models/User");
 
 const transactionsRoute = require("./middlewares/transactions.js");
@@ -51,6 +54,22 @@ app.get("/users", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+app.get("/api/products", productmiddleware, async (req, res) => {
+  const userId = req.user.id;
+  try {
+    const products = await Product.find({
+      $or: [
+        { visibleTo: userId },
+        { visibleTo: { $exists: false } }, // Products that are visible to all users
+      ],
+    });
+
+    res.status(200).json(products);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api", transactionsRoute);
 // Routes
 app.use("/api/auth", require("./routes/authRoutes"));

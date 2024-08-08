@@ -21,6 +21,8 @@ import AdminDashboard from "./components/AdminDashboard";
 import NotFound from "./pages/NotFound";
 import AddEvent from "./pages/Admin dashboard page/AddEvent";
 import AddProduct from "./pages/Admin dashboard page/AddProduct";
+import Products from "./pages/Products";
+import Edituserbalance from "./pages/Admin dashboard page/Edituserbalance";
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false); // Add state for admin check
@@ -47,6 +49,10 @@ const App = () => {
           element={isAdmin ? <AddProduct /> : <Navigate to="/admin/login" />}
         />
         <Route
+          path="/admin/dashboard/edituserbalance"
+          element={<Edituserbalance />}
+        />
+        <Route
           path="/login"
           element={<Login setIsLoggedIn={setIsLoggedIn} />}
         />
@@ -70,6 +76,7 @@ const App = () => {
           <Route path="/changepass" element={<ChangePass />} />
           <Route path="/faq" element={<FAQ />} />
           <Route path="/customerservice" element={<Customerservice />} />
+          <Route path="/products" element={<Products />} />
         </Route>
         <Route path="*" element={<NotFound />} />
       </Routes>

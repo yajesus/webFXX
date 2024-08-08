@@ -23,7 +23,7 @@ const Register = () => {
     useState(false);
   const [invitationCodeVisible, setInvitationCodeVisible] = useState(false);
   const navigate = useNavigate();
-
+  const phonevalid = /^\+(?:[0-9] ?){6,14}[0-9]$/;
   const handleVisibilityToggle = (type) => {
     if (type === "password") {
       setPasswordVisible(!passwordVisible);
@@ -41,10 +41,13 @@ const Register = () => {
   };
 
   const validatePhoneNumber = (number) => {
-    return validator.isMobilePhone(number, "any", { strictMode: false });
+    return phonevalid.test(number);
   };
   const handleRegister = async (e) => {
     e.preventDefault();
+    if (!username) {
+      setError("Enter user name");
+    }
     console.log(username, withdrawalPassword, phonenumber, invitationCode);
     if (!validatePhoneNumber(phonenumber)) {
       setError("Invalid phone number.");
@@ -97,11 +100,13 @@ const Register = () => {
       // Redirect to login page
       setTimeout(() => navigate("/login"), 3000);
     } catch (err) {
-      setError(
-        err.response?.data.message || "An error occurred during registration."
-      );
+      console.error("Registration error:", err.response);
+      const errorMessage = err.response?.data?.errors
+        ? err.response.data.errors.map((e) => e.msg).join(", ")
+        : err.response?.data?.message ||
+          "An error occurred during registration.";
+      setError(errorMessage);
       setTimeout(() => setError(""), 5000);
-      // Clear error after 5 seconds
     }
   };
 

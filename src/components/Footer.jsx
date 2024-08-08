@@ -20,7 +20,7 @@ const Footer = () => {
               <p>Home</p>
             </div>
           </Link>
-          <Link to="/event" class="  font-bold text-white">
+          <Link to="/products" class="  font-bold text-white">
             <div className="w-[150px] h-[100px]  flex flex-col justify-center items-center">
               <FontAwesomeIcon
                 icon={faBackwardFast}

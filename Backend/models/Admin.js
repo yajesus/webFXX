@@ -1,10 +1,18 @@
 const mongoose = require("mongoose");
 const bcrypt = require("bcryptjs");
+const dotenv = require("dotenv");
 
-const AdminSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
-});
+dotenv.config();
+const AdminSchema = new mongoose.Schema(
+  {
+    email: { type: String, required: true, unique: true },
+    password: { type: String, required: true },
+  },
+  {
+    _id: true,
+    id: true,
+  }
+);
 
 // Password hashing
 AdminSchema.pre("save", async function (next) {

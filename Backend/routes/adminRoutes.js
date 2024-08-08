@@ -2,13 +2,18 @@ const express = require("express");
 const router = express.Router();
 const adminController = require("../controllers/adminController");
 const authenticateAndAdmin = require("../middlewares/authMiddleware");
-
+const upload = require("../middlewares/upload");
 router.post("/login", adminController.adminLogin);
 
 // Protected admin routes
 router.post("/add-event", authenticateAndAdmin, adminController.addEvent);
-router.post("/add-product", authenticateAndAdmin, adminController.addProduct);
 router.post(
+  "/add-product",
+  upload.single("image"),
+  authenticateAndAdmin,
+  adminController.addProduct
+);
+router.put(
   "/edit-user-balance",
   authenticateAndAdmin,
 
