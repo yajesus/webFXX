@@ -31,5 +31,9 @@ router.post(
 
   adminController.cancelPremiumProduct
 );
-
+router.post(
+  "/generate-invite-code",
+  authenticateAndAdmin,
+  adminController.generatecode
+);
 module.exports = router;

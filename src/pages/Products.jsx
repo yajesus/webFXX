@@ -12,10 +12,18 @@ const Products = () => {
     const fetchProducts = async () => {
       try {
         const token = localStorage.getItem("token");
+        const submittedProductIds =
+          JSON.parse(localStorage.getItem("submittedProductIds")) || [];
+
         const response = await axios.get("http://localhost:5000/api/products", {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setProducts(response.data);
+
+        // Filter out already submitted products
+        const filteredProducts = response.data.filter(
+          (product) => !submittedProductIds.includes(product._id)
+        );
+        setProducts(filteredProducts);
       } catch (err) {
         setError("Error fetching products");
         console.error(err);
@@ -45,13 +53,20 @@ const Products = () => {
       setError("");
       setTimeout(() => setSuccess(""), 3000);
 
+      // Update local storage to remember the submitted product
+      const submittedProductIds =
+        JSON.parse(localStorage.getItem("submittedProductIds")) || [];
+      submittedProductIds.push(currentProduct._id);
+      localStorage.setItem(
+        "submittedProductIds",
+        JSON.stringify(submittedProductIds)
+      );
+
       // Move to the next product
       setCurrentProductIndex((prevIndex) => prevIndex + 1);
       setProgress((prevProgress) => prevProgress + 1);
     } catch (err) {
       let errorMessage = "An error occurred";
-      console.log(err);
-      // Check for error response and format message
       if (err.response) {
         if (err.response.data && typeof err.response.data === "object") {
           errorMessage = err.response.data.message || "An error occurred";
@@ -70,7 +85,7 @@ const Products = () => {
   };
 
   return (
-    <div className="w-full h-[800px]  mx-auto mt-20 px-4">
+    <div className="w-full h-[800px] mx-auto mt-20 px-4">
       <div className="w-full flex justify-center">
         <p className="text-4xl text-blue-600 font-bold">Boost Mission</p>
       </div>
@@ -108,16 +123,20 @@ const Products = () => {
           </p>
         </div>
       ) : (
-        <p>No more products to show</p>
+        <p className="text-center text-red-600 text-2xl mt-6 font-bold">
+          No more products to show
+        </p>
       )}
-      <div className="w-full flex justify-center">
-        <button
-          onClick={handleStartNow}
-          className=" w-[60%] h-20 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 mt-4 text-3xl font-bold"
-        >
-          Start Now ({progress}/{products.length})
-        </button>
-      </div>
+      {products.length > 0 && currentProductIndex < products.length && (
+        <div className="w-full flex justify-center">
+          <button
+            onClick={handleStartNow}
+            className="w-[60%] h-20 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 mt-4 text-3xl font-bold"
+          >
+            Start Now ({progress}/{products.length})
+          </button>
+        </div>
+      )}
     </div>
   );
 };

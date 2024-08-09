@@ -32,7 +32,7 @@ const Profile = () => {
                 />
               </div>
               <Link
-                to="/event"
+                to="/Customerservice"
                 class=" hover:text-blue-500 hover:underline font-bold "
               >
                 Deposit
@@ -93,7 +93,7 @@ const Profile = () => {
                 />
               </div>
               <Link
-                to="/event"
+                to="/Transaction"
                 class=" hover:text-blue-500 hover:underline font-bold "
               >
                 Transaction

@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const User = require("./models/User");
 const Product = require("./models/Product.js");
-
+const InviteCode = require("./models/Invitecode.js");
 const path = require("path");
 const cors = require("cors");
 dotenv.config();
@@ -54,6 +54,7 @@ app.get("/users", async (req, res) => {
     res.status(500).send("Server Error");
   }
 });
+
 app.get("/api/products", productsmiddleware, async (req, res) => {
   const userId = req.user.id;
   try {

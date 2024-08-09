@@ -6,6 +6,7 @@ const Transaction = require("../models/Transaction");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
+const generateInviteCode = require("../middlewares/Invitecodemiddleware");
 exports.adminLogin = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -119,5 +120,13 @@ exports.cancelPremiumProduct = async (req, res) => {
     res.status(200).send(product);
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+exports.generatecode = async (req, res) => {
+  try {
+    const code = await generateInviteCode();
+    res.status(200).json({ code });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to generate invite code" });
   }
 };
