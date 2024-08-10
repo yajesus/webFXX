@@ -48,7 +48,7 @@ const Register = () => {
     if (!username) {
       setError("Enter user name");
     }
-    console.log(username, withdrawalPassword, phonenumber, invitationCode);
+
     if (!validatePhoneNumber(phonenumber)) {
       setError("Invalid phone number.");
       setTimeout(() => setError(""), 5000); // Clear error after 5 seconds

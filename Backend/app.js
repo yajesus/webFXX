@@ -5,7 +5,7 @@ const bodyParser = require("body-parser");
 const dotenv = require("dotenv");
 const User = require("./models/User");
 const Product = require("./models/Product.js");
-const InviteCode = require("./models/Invitecode.js");
+
 const path = require("path");
 const cors = require("cors");
 dotenv.config();

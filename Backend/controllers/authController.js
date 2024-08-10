@@ -1,6 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
-const validator = require("validator");
+const InviteCode = require("../models/Invitecode");
+const Userinvitecode = require("../models/Userinvitecode");
 const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const { parsePhoneNumberFromString } = require("libphonenumber-js");
@@ -9,7 +10,7 @@ const { body, validationResult } = require("express-validator");
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
-
+console.log("your jwt scret", JWT_SECRET);
 // Sanitize and validate inputs for registration
 exports.register = [
   // Input sanitization and validation
@@ -49,8 +50,24 @@ exports.register = [
       withdrawalPassword,
       invitationCode,
     } = req.body;
-
+    console.log("Request body:", req.body);
     try {
+      //check invitecode
+      const inviteCode = await InviteCode.findOne({
+        code: invitationCode,
+        used: false,
+      });
+      const userInviteCode = await Userinvitecode.findOne({
+        code: invitationCode,
+        expiresAt: { $gt: new Date() }, // Check if the code is not expired
+        // Check if the code is not used by the current user
+      });
+
+      if (!inviteCode && !userInviteCode) {
+        return res.status(400).json({
+          message: "Invalid, expired, or already used invitation code.",
+        });
+      }
       // Check if user already exists
       let user =
         (await User.findOne({ username })) ||
@@ -63,12 +80,17 @@ exports.register = [
       user = new User({
         username,
         phoneNumber,
-        password: await bcrypt.hash(password, 10),
-        withdrawalPassword: await bcrypt.hash(withdrawalPassword, 10),
+        password,
+        withdrawalPassword,
         invitationCode,
       });
 
       await user.save();
+      // Update the UserInviteCode to include the new user in usedBy
+      if (userInviteCode) {
+        userInviteCode.usedBy.push(user._id);
+        await userInviteCode.save();
+      }
       res.status(201).json(user);
     } catch (err) {
       res.status(500).json({ message: err.message });
@@ -102,9 +124,10 @@ exports.login = [
       if (!user) {
         return res.status(400).json({ message: "User not found" });
       }
-
+      console.log("user find", user);
+      console.log("your jwt scret", JWT_SECRET);
       // Check password
-      const isMatch = await bcrypt.compare(password, user.password);
+      const isMatch = await user.verifyPassword(password);
 
       console.log("user", isMatch);
       if (!isMatch) {
@@ -115,7 +138,7 @@ exports.login = [
       const token = jwt.sign(
         { id: user._id, username: user.username },
         JWT_SECRET,
-        { expiresIn: "1h" }
+        { expiresIn: "1d" }
       );
 
       res.status(200).json({ userId: user._id, token });

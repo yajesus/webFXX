@@ -25,75 +25,81 @@ import Products from "./pages/Products";
 import Edituserbalance from "./pages/Admin dashboard page/Edituserbalance";
 import GenerateInviteCode from "./pages/Admin dashboard page/Generatecode";
 import Transaction from "../src/pages/profilepages/Transaction";
-import ErrorBoundaryWrapper from "./components/ErrorBoundaryWrapper";
+import Approvewidthdrwal from "./pages/Admin dashboard page/Approvewidthdrwal";
+import Notifications from "./pages/profilepages/Notifications";
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false); // Add state for admin check
 
   return (
     <div className="overflow-y-visible">
-      <ErrorBoundaryWrapper>
-        <Routes>
+      <Routes>
+        <Route
+          path="/admin/login"
+          element={<AdminLogin setIsAdmin={setIsAdmin} />}
+        />
+        <Route
+          path="/admin/dashboard"
+          element={
+            isAdmin ? <AdminDashboard /> : <Navigate to="/admin/login" />
+          }
+        />
+        <Route
+          path="/admin/dashboard/addevent"
+          element={isAdmin ? <AddEvent /> : <Navigate to="/admin/login" />}
+        />
+        <Route
+          path="/admin/dashboard/addproduct"
+          element={isAdmin ? <AddProduct /> : <Navigate to="/admin/login" />}
+        />
+        <Route
+          path="/admin/dashboard/edituserbalance"
+          element={
+            isAdmin ? <Edituserbalance /> : <Navigate to="/admin/login" />
+          }
+        />
+        <Route
+          path="/admin/dashboard/Generatecode"
+          element={
+            isAdmin ? <GenerateInviteCode /> : <Navigate to="/admin/login" />
+          }
+        />
+        <Route
+          path="/admin/dashboard/Approvewithdrwal"
+          element={
+            isAdmin ? <Approvewidthdrwal /> : <Navigate to="/admin/login" />
+          }
+        />
+        <Route
+          path="/login"
+          element={<Login setIsLoggedIn={setIsLoggedIn} />}
+        />
+        <Route path="/register" element={<Register />} />
+        <Route
+          path="/"
+          element={isLoggedIn ? <Layout /> : <Navigate to="/login" />}
+        >
           <Route
-            path="/admin/login"
-            element={<AdminLogin setIsAdmin={setIsAdmin} />}
+            index
+            element={isLoggedIn ? <Home /> : <Navigate to="/login" />}
           />
-          <Route
-            path="/admin/dashboard"
-            element={
-              isAdmin ? <AdminDashboard /> : <Navigate to="/admin/login" />
-            }
-          />
-          <Route
-            path="/admin/dashboard/addevent"
-            element={isAdmin ? <AddEvent /> : <Navigate to="/admin/login" />}
-          />
-          <Route
-            path="/admin/dashboard/addproduct"
-            element={isAdmin ? <AddProduct /> : <Navigate to="/admin/login" />}
-          />
-          <Route
-            path="/admin/dashboard/edituserbalance"
-            element={
-              isAdmin ? <Edituserbalance /> : <Navigate to="/admin/login" />
-            }
-          />
-          <Route
-            path="/admin/dashboard/Generatecode"
-            element={
-              isAdmin ? <GenerateInviteCode /> : <Navigate to="/admin/login" />
-            }
-          />
-          <Route
-            path="/login"
-            element={<Login setIsLoggedIn={setIsLoggedIn} />}
-          />
-          <Route path="/register" element={<Register />} />
-          <Route
-            path="/"
-            element={isLoggedIn ? <Layout /> : <Navigate to="/login" />}
-          >
-            <Route
-              index
-              element={isLoggedIn ? <Home /> : <Navigate to="/login" />}
-            />
-            <Route path="/event" element={<Event />} />
-            <Route path="/withdrawal" element={<Withdrawal />} />
-            <Route path="/invitation" element={<Invitation />} />
-            <Route path="/company" element={<Company />} />
-            <Route path="/tc" element={<TC />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/wallet" element={<BindWallet />} />
-            <Route path="/team" element={<Team />} />
-            <Route path="/changepass" element={<ChangePass />} />
-            <Route path="/faq" element={<FAQ />} />
-            <Route path="/customerservice" element={<Customerservice />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/Transaction" element={<Transaction />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </ErrorBoundaryWrapper>
+          <Route path="/event" element={<Event />} />
+          <Route path="/withdrawal" element={<Withdrawal />} />
+          <Route path="/invitation" element={<Invitation />} />
+          <Route path="/company" element={<Company />} />
+          <Route path="/tc" element={<TC />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/wallet" element={<BindWallet />} />
+          <Route path="/team" element={<Team />} />
+          <Route path="/changepass" element={<ChangePass />} />
+          <Route path="/faq" element={<FAQ />} />
+          <Route path="/customerservice" element={<Customerservice />} />
+          <Route path="/products" element={<Products />} />
+          <Route path="/Transaction" element={<Transaction />} />
+          <Route path="/Notification" element={<Notifications />} />
+        </Route>
+        <Route path="*" element={<NotFound />} />
+      </Routes>
     </div>
   );
 };

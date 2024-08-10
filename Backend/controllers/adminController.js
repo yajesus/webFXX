@@ -6,7 +6,9 @@ const Transaction = require("../models/Transaction");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
+const Notification = require("../models/Notifications");
 const generateInviteCode = require("../middlewares/Invitecodemiddleware");
+
 exports.adminLogin = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -39,6 +41,16 @@ exports.addEvent = async (req, res) => {
   try {
     const event = new Event({ title, content, image });
     await event.save();
+    // Notify all users
+    const users = await User.find({}, "_id");
+    const notifications = users.map(
+      (user) =>
+        new Notification({
+          userId: user._id,
+          message: `A new event has been added: ${title}`,
+        })
+    );
+    await Notification.insertMany(notifications);
     res.status(201).send(event);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -75,6 +87,16 @@ exports.addProduct = async (req, res) => {
       visibleTo: visibleToArray,
     });
     await product.save();
+    // Notify all users
+    const users = await User.find({}, "_id");
+    const notifications = users.map(
+      (user) =>
+        new Notification({
+          userId: user._id,
+          message: `A new product has been added: ${name}`,
+        })
+    );
+    await Notification.insertMany(notifications);
     res.status(201).send(product);
   } catch (err) {
     console.error("Error adding product:", err);
@@ -99,10 +121,21 @@ exports.editUserBalance = async (req, res) => {
 
 exports.approveWithdrawal = async (req, res) => {
   const { withdrawalId } = req.body;
+  console.log(withdrawalId);
   try {
     const withdrawal = await Transaction.findById(withdrawalId);
     withdrawal.status = "approved";
     await withdrawal.save();
+    // Notify all users
+    const users = await User.find({}, "_id");
+    const notifications = users.map(
+      (user) =>
+        new Notification({
+          userId: user._id,
+          message: `A withdrawal request has been approved`,
+        })
+    );
+    await Notification.insertMany(notifications);
     res.status(200).send(withdrawal);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -128,5 +161,29 @@ exports.generatecode = async (req, res) => {
     res.status(200).json({ code });
   } catch (error) {
     res.status(500).json({ message: "Failed to generate invite code" });
+  }
+};
+exports.userstransaction = async (req, res) => {
+  try {
+    // Find all transactions and populate the user field
+    const transactions = await Transaction.find({ status: "pending" }).populate(
+      "user"
+    );
+
+    // Extract unique users from the transactions
+    const usersWithTransactions = transactions
+      .map((transaction) => transaction.user)
+      .filter(
+        (value, index, self) =>
+          self.findIndex(
+            (user) => user._id.toString() === value._id.toString()
+          ) === index
+      );
+    if (!transactions || transactions.length === 0) {
+      return res.status(404).json({ message: "No pending transactions found" });
+    }
+    res.status(200).json(transactions);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
   }
 };

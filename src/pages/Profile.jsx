@@ -115,7 +115,7 @@ const Profile = () => {
                 <FontAwesomeIcon icon={faBell} className="text-4xl purple" />
               </div>
               <Link
-                to="/event"
+                to="/Notification"
                 class=" hover:text-blue-500 hover:underline font-bold "
               >
                 Notifications

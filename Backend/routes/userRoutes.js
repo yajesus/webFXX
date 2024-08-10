@@ -24,4 +24,10 @@ router.get("/invite-codes", async (req, res) => {
     res.status(500).json({ message: "Server error", error: err.message });
   }
 });
+router.post("/bind-wallet", authuser, userController.bindWallet);
+router.get("/Notification", authuser, userController.getNotifications);
+router.put("/mark-as-read", authuser, userController.markAsRead);
+router.post("/generate-invite-code", authuser, userController.userinvitecode);
+router.get("/invite-code", authuser, userController.getInviteCode);
+router.get("/users-invited-by", authuser, userController.getUsersInvitedBy);
 module.exports = router;

@@ -36,4 +36,9 @@ router.post(
   authenticateAndAdmin,
   adminController.generatecode
 );
+router.get(
+  "/users-with-transactions",
+  authenticateAndAdmin,
+  adminController.userstransaction
+);
 module.exports = router;

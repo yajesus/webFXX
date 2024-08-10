@@ -37,6 +37,46 @@ code {
   animation: spin 1s ease-in-out infinite;
 }
 
+.loader {
+  border: 16px solid #f3f3f3;
+  /* Light grey */
+  border-top: 16px solid #3498db;
+  /* Blue */
+  border-radius: 50%;
+  width: 120px;
+  height: 120px;
+  animation: spin 2s linear infinite;
+}
+
+/* Add these styles in your CSS file or use Tailwind CSS classes */
+.dropdown {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  width: 300px;
+  background-color: white;
+  border-radius: 8px;
+  box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.notification-item {
+  padding: 16px;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.notification-item:last-child {
+  border-bottom: none;
+}
+
+.notification-title {
+  font-weight: bold;
+}
+
+.notification-content {
+  color: #6b7280;
+}
+
 @keyframes spin {
   0% {
     transform: rotate(0deg);
