@@ -6,7 +6,7 @@ const dotenv = require("dotenv");
 
 dotenv.config({ path: "../.env" });
 const createAdmin = async () => {
-  const email = "admin@example.com";
+  const email = "admin@example.com ";
   const password = "123admin"; // Replace with your secure password
 
   try {

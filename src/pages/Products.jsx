@@ -3,7 +3,7 @@ import axios from "axios";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
-  const [currentProductIndex, setCurrentProductIndex] = useState(0);
+  const [currentProductIndex, setCurrentProductIndex] = useState(null); // Start as null to show logo initially
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [progress, setProgress] = useState(0);
@@ -33,7 +33,11 @@ const Products = () => {
     fetchProducts();
   }, []);
 
-  const handleStartNow = async () => {
+  const handleStartNow = () => {
+    setCurrentProductIndex(0); // Start showing products
+  };
+
+  const handleBoost = async () => {
     const token = localStorage.getItem("token");
     const currentProduct = products[currentProductIndex];
     const userId = localStorage.getItem("userId");
@@ -85,57 +89,72 @@ const Products = () => {
   };
 
   return (
-    <div className="w-full h-[800px] mx-auto mt-20 px-4">
-      <div className="w-full flex justify-center">
-        <p className="text-4xl text-blue-600 font-bold">Boost Mission</p>
-      </div>
-      {error && (
-        <div className="bg-red-100 text-red-700 p-2 mb-4 rounded">{error}</div>
-      )}
-      {success && (
-        <div className="bg-green-100 text-green-700 p-2 mb-4 rounded">
-          {success}
-        </div>
-      )}
-      {products.length > 0 && currentProductIndex < products.length ? (
-        <div className="border p-3 rounded shadow-md max-w-md mx-auto mt-6">
-          <h3 className="text-lg font-semibold">
-            {products[currentProductIndex].name}
-          </h3>
-          <p className="text-sm mt-1">
-            {products[currentProductIndex].description}
-          </p>
-          {products[currentProductIndex].image && (
-            <img
-              src={`http://localhost:5000/${products[currentProductIndex].image}`}
-              alt={products[currentProductIndex].name}
-              className="w-full h-auto mt-3 rounded"
-            />
-          )}
-          <p className="text-sm mt-2">
-            Price: ${products[currentProductIndex].price}
-          </p>
-          <p className="text-sm">
-            Profit: ${products[currentProductIndex].profit}
-          </p>
-          <p className="text-sm">
-            Premium: {products[currentProductIndex].isPremium ? "Yes" : "No"}
-          </p>
-        </div>
-      ) : (
-        <p className="text-center text-red-600 text-2xl mt-6 font-bold">
-          No more products to show
-        </p>
-      )}
-      {products.length > 0 && currentProductIndex < products.length && (
-        <div className="w-full flex justify-center">
+    <div className="w-full h-[800px] mx-auto mt-20 px-4 flex flex-col items-center">
+      {currentProductIndex === null ? (
+        <>
+          <img
+            src={`${process.env.PUBLIC_URL}/logo.png`}
+            alt="Logo"
+            className="w-[160px] h-[140px] mt-2 ml-2"
+          />
+          <p className="text-4xl text-blue-600 font-bold mt-4">Boost Mission</p>
           <button
             onClick={handleStartNow}
             className="w-[60%] h-20 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 mt-4 text-3xl font-bold"
           >
             Start Now ({progress}/{products.length})
           </button>
-        </div>
+        </>
+      ) : (
+        <>
+          {error && (
+            <div className="bg-red-100 text-red-700 p-2 mb-4 rounded">
+              {error}
+            </div>
+          )}
+          {success && (
+            <div className="bg-green-100 text-green-700 p-2 mb-4 rounded">
+              {success}
+            </div>
+          )}
+          {products.length > 0 && currentProductIndex < products.length ? (
+            <div className="border p-3 rounded shadow-md max-w-md mx-auto mt-6">
+              <h3 className="text-lg font-semibold">
+                {products[currentProductIndex].name}
+              </h3>
+              <p className="text-sm mt-1">
+                {products[currentProductIndex].description}
+              </p>
+              {products[currentProductIndex].image && (
+                <img
+                  src={`http://localhost:5000/${products[currentProductIndex].image}`}
+                  alt={products[currentProductIndex].name}
+                  className="w-full h-auto mt-3 rounded"
+                />
+              )}
+              <p className="text-sm mt-2">
+                Price: ${products[currentProductIndex].price}
+              </p>
+              <p className="text-sm">
+                Profit: ${products[currentProductIndex].profit}
+              </p>
+              <p className="text-sm">
+                Premium:{" "}
+                {products[currentProductIndex].isPremium ? "Yes" : "No"}
+              </p>
+              <button
+                onClick={handleBoost}
+                className="w-full mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-2xl font-bold"
+              >
+                Boost
+              </button>
+            </div>
+          ) : (
+            <p className="text-center text-red-600 text-2xl mt-6 font-bold">
+              No more products to show
+            </p>
+          )}
+        </>
       )}
     </div>
   );

@@ -27,10 +27,17 @@ import GenerateInviteCode from "./pages/Admin dashboard page/Generatecode";
 import Transaction from "../src/pages/profilepages/Transaction";
 import Approvewidthdrwal from "./pages/Admin dashboard page/Approvewidthdrwal";
 import Notifications from "./pages/profilepages/Notifications";
+import Approveuserproduct from "./pages/Admin dashboard page/Approveuserproduct";
+import Forgetpassword from "./pages/mainpage/Forgetpassword";
+import Newpassword from "./pages/mainpage/Newpassword";
+import Usersdetail from "./pages/Admin dashboard page/Usersdetail";
+const ForgetpasswordWrapper = ({ setIsForgetpassword }) => (
+  <Forgetpassword setIsForgetpassword={setIsForgetpassword} />
+);
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false); // Add state for admin check
-
+  const [isForgetpassword, setIsForgetpassword] = useState(false);
   return (
     <div className="overflow-y-visible">
       <Routes>
@@ -43,6 +50,10 @@ const App = () => {
           element={
             isAdmin ? <AdminDashboard /> : <Navigate to="/admin/login" />
           }
+        />
+        <Route
+          path="/admin/dashboard/Usersdetail"
+          element={isAdmin ? <Usersdetail /> : <Navigate to="/admin/login" />}
         />
         <Route
           path="/admin/dashboard/addevent"
@@ -71,10 +82,33 @@ const App = () => {
           }
         />
         <Route
+          path="/admin/dashboard/Approveuserproduct"
+          element={
+            isAdmin ? <Approveuserproduct /> : <Navigate to="/admin/login" />
+          }
+        />
+
+        <Route
           path="/login"
           element={<Login setIsLoggedIn={setIsLoggedIn} />}
         />
         <Route path="/register" element={<Register />} />
+        <Route
+          path="/Forgetpassword"
+          element={
+            <ForgetpasswordWrapper setIsForgetpassword={setIsForgetpassword} />
+          }
+        />
+        <Route
+          path="/Newpassword"
+          element={
+            isForgetpassword ? (
+              <Newpassword />
+            ) : (
+              <Navigate to="/Forgetpassword" />
+            )
+          }
+        />
         <Route
           path="/"
           element={isLoggedIn ? <Layout /> : <Navigate to="/login" />}

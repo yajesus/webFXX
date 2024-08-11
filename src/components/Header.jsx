@@ -10,22 +10,73 @@ const Header = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const dropdownRef = useRef(null);
   const token = localStorage.getItem("token");
-  const id = localStorage.getItem("userId");
+
+  // Fetch notifications and unread count on component mount
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      try {
+        const response = await axios.get(
+          "http://localhost:5000/api/user/Notification",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = response.data;
+        setNotifications(data);
+        setUnreadCount(data.filter((n) => !n.read).length);
+      } catch (err) {
+        console.error("Failed to fetch notifications", err);
+      }
+    };
+
+    fetchNotifications();
+  }, [token]);
+
   const handleBellClick = async () => {
     if (!isOpen) {
-      // Fetch notifications only when opening the dropdown
-      const response = await fetch(
-        "http://localhost:5000/api/user/Notification",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+      try {
+        // Fetch notifications when opening the dropdown
+        const response = await axios.get(
+          "http://localhost:5000/api/user/Notification",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
+        const data = response.data;
+        setNotifications(data);
+
+        // Update unread notifications count
+        const unread = data.filter((n) => !n.read).length;
+        setUnreadCount(unread);
+
+        // Collect IDs of unread notifications
+        const unreadNotifications = data.filter((n) => !n.read);
+        const unreadIds = unreadNotifications.map((n) => n._id);
+
+        // Mark notifications as read
+        if (unreadIds.length > 0) {
+          await axios.put(
+            "http://localhost:5000/api/user/mark-as-read",
+            { ids: unreadIds },
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          // Remove marked notifications from the list
+          setNotifications((prev) =>
+            prev.filter((n) => !unreadIds.includes(n._id))
+          );
+          setUnreadCount(0); // Set unread count to 0 after marking as read
         }
-      );
-      const data = await response.json();
-      console.log(data);
-      setNotifications(data);
-      setUnreadCount(data.filter((n) => !n.read).length);
+      } catch (err) {
+        console.error("Failed to handle bell click", err);
+      }
     }
     setIsOpen((prev) => !prev);
   };
@@ -67,7 +118,7 @@ const Header = () => {
               {isOpen && (
                 <div
                   ref={dropdownRef}
-                  className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-md overflow-hidden z-50"
+                  className="absolute right-0 mt-2 w-64 bg-white shadow-lg rounded-md overflow-hidden z-50 h-[500px] overflow-y-visible"
                 >
                   <div className="p-4">
                     <p className="font-bold text-lg mb-2">Notifications</p>
@@ -76,8 +127,10 @@ const Header = () => {
                     ) : (
                       notifications.map((notification) => (
                         <div
-                          key={notification.id}
-                          className="p-2 border-b border-gray-200"
+                          key={notification._id} // Use _id for unique key
+                          className={`p-2 border-b border-gray-200 ${
+                            notification.read ? "bg-gray-100" : "bg-white"
+                          }`}
                         >
                           <p className="font-semibold">{notification.title}</p>
                           <p className="text-sm text-gray-600">

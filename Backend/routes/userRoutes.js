@@ -3,6 +3,7 @@ const router = express.Router();
 const userController = require("../controllers/userController");
 const authuser = require("../middlewares/userauth");
 const InviteCode = require("../models/Invitecode");
+const limiter = require("../middlewares/ratelimit");
 router.post("/submit-task", authuser, userController.submitTask);
 router.post("/request-withdrawal", authuser, userController.requestWithdrawal);
 router.get(
@@ -10,7 +11,12 @@ router.get(
   authuser,
   userController.getTransactionHistory
 );
-router.put("/update-password", authuser, userController.updatepassword);
+router.put(
+  "/update-password",
+  authuser,
+  userController.updatepassword,
+  limiter.passwordUpdateLimiter
+);
 router.put(
   "/update-withdrawal-password",
   authuser,
@@ -30,4 +36,7 @@ router.put("/mark-as-read", authuser, userController.markAsRead);
 router.post("/generate-invite-code", authuser, userController.userinvitecode);
 router.get("/invite-code", authuser, userController.getInviteCode);
 router.get("/users-invited-by", authuser, userController.getUsersInvitedBy);
+router.get("/events", authuser, userController.getAllEvents);
+router.post("/forgot-password", userController.forgotPassword);
+router.post("/newpassword", userController.newPassword);
 module.exports = router;

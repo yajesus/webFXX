@@ -6,6 +6,7 @@ const Approvewidthdrwal = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState("");
+  const [selectedTransactionId, setSelectedTransactionId] = useState(null);
 
   const token = localStorage.getItem("adminToken");
 
@@ -33,12 +34,13 @@ const Approvewidthdrwal = () => {
     fetchTransactions();
   }, [token]);
 
-  const handleApprove = async (transactionId) => {
+  const handleApprove = async () => {
+    console.log(selectedTransactionId);
     try {
       const response = await axios.post(
         `http://localhost:5000/api/admin/approve-withdrawal`,
         {
-          transactionId,
+          withdrawalId: selectedTransactionId,
         },
         {
           headers: {
@@ -48,11 +50,35 @@ const Approvewidthdrwal = () => {
       );
       setSuccessMessage("Transaction approved successfully!");
       setTransactions((prev) =>
-        prev.filter((transaction) => transaction._id !== transactionId)
+        prev.filter((transaction) => transaction._id !== selectedTransactionId)
       );
       setTimeout(() => setSuccessMessage(""), 3000); // Clear success message after 3 seconds
     } catch (err) {
       setError("Failed to approve the transaction.");
+      setTimeout(() => setError(null), 3000); // Clear error after 3 seconds
+    }
+  };
+
+  const handleReject = async () => {
+    try {
+      const response = await axios.post(
+        `http://localhost:5000/api/admin/reject-withdrawal`,
+        {
+          withdrawalId: selectedTransactionId,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setSuccessMessage("Transaction rejected successfully!");
+      setTransactions((prev) =>
+        prev.filter((transaction) => transaction._id !== selectedTransactionId)
+      );
+      setTimeout(() => setSuccessMessage(""), 3000); // Clear success message after 3 seconds
+    } catch (err) {
+      setError("Failed to reject the transaction.");
       setTimeout(() => setError(null), 3000); // Clear error after 3 seconds
     }
   };
@@ -97,12 +123,26 @@ const Approvewidthdrwal = () => {
                         Status: {transaction.status}
                       </p>
                     </div>
-                    <button
-                      onClick={() => handleApprove(transaction._id)}
-                      className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition"
-                    >
-                      Approve
-                    </button>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => {
+                          setSelectedTransactionId(transaction._id);
+                          handleApprove();
+                        }}
+                        className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700 transition"
+                      >
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => {
+                          setSelectedTransactionId(transaction._id);
+                          handleReject();
+                        }}
+                        className="px-4 py-2 bg-red-600 text-white font-semibold rounded-md hover:bg-red-700 transition"
+                      >
+                        Reject
+                      </button>
+                    </div>
                   </li>
                 ))}
               </ul>

@@ -6,6 +6,8 @@ const WAValidator = require("multicoin-address-validator");
 const Notification = require("../models/Notifications");
 const UserInviteCode = require("../models/Userinvitecode");
 const crypto = require("crypto");
+const Events = require("../models/Event");
+const { check, validationResult } = require("express-validator");
 // Utility function to validate wallet address
 const validateWalletName = (name) => {
   // Example: Wallet name must be between 3 and 50 characters and only contain alphanumeric characters and spaces
@@ -48,25 +50,48 @@ exports.bindWallet = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+
 exports.submitTask = async (req, res) => {
   const { userId, productId } = req.body;
+
   try {
+    // Find the user and the product
     const user = await User.findById(userId);
     const product = await Product.findById(productId);
-    console.log("incoming user:", user.username);
-    if (product.isPremium && !product.visibleTo.includes(userId)) {
-      return res.status(403).send("Not authorized to access premium product");
+
+    if (!user || !product) {
+      return res.status(404).json({ message: "User or product not found" });
     }
 
-    if (user.balance < 50) {
-      return res.status(400).send("Insufficient balance");
+    // Check if the product is premium
+    if (product.isPremium) {
+      // Contact customer service for premium products
+      // Replace this with actual logic for contacting customer service
+      console.log(
+        `Contacting customer service for user ${userId} and product ${productId}`
+      );
+      // You may use a service or send an email here
+      return res.status(400).json({ message: "Contact customer services" });
     }
 
-    user.balance += product.profit;
-    await user.save();
-    res.status(200).send(user);
+    // Check user's balance
+    if (product.isPremium || user.balance >= 100) {
+      // Add the product to the user's submitted products
+      user.submittedProducts.push(productId);
+
+      await user.save();
+
+      return res
+        .status(200)
+        .json({ message: "Product submitted successfully" });
+    } else {
+      return res
+        .status(400)
+        .json({ message: "Insufficient balance for non-premium product" });
+    }
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    console.error(err);
+    return res.status(500).json({ message: "An error occurred" });
   }
 };
 
@@ -210,7 +235,7 @@ exports.updatewithdrawalpassword = async (req, res) => {
   }
 };
 exports.getNotifications = async (req, res) => {
-  const userId = req.user.id; // Assuming user ID is included in the request object
+  const userId = req.query.userId; // Assuming user ID is included in the request object
   try {
     const notifications = await Notification.find({ userId }).sort({
       createdAt: -1,
@@ -222,17 +247,15 @@ exports.getNotifications = async (req, res) => {
 };
 
 exports.markAsRead = async (req, res) => {
-  const { notificationId } = req.body;
   try {
-    const notification = await Notification.findById(notificationId);
-    if (!notification) {
-      return res.status(404).json({ message: "Notification not found" });
-    }
-    notification.read = true;
-    await notification.save();
-    res.status(200).send(notification);
+    const { ids } = req.body; // Get IDs from request body
+    await Notification.updateMany(
+      { _id: { $in: ids }, read: false },
+      { read: true }
+    );
+    res.status(200).json({ message: "Selected notifications marked as read" });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ message: "Failed to mark notifications as read" });
   }
 };
 exports.userinvitecode = async (req, res) => {
@@ -328,3 +351,91 @@ exports.getUsersInvitedBy = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
+exports.getAllEvents = async (req, res) => {
+  try {
+    const events = await Events.find().sort({ createdAt: -1 }); // Fetch all events sorted by newest first
+
+    res.status(200).json(events);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+exports.forgotPassword = async (req, res) => {
+  try {
+    const { username, invitationCode } = req.body;
+
+    // Find the user by username and invitation code
+    const user = await User.findOne({ username, invitationCode });
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({ message: "User not found or invalid invitation code" });
+    }
+
+    // If the user is found, proceed to allow password reset
+    // You can return a token or directly proceed to password reset logic
+    res.status(200).json({
+      message:
+        "Username and invitation code verified. Proceed to reset password.",
+      userId: user._id, // Optionally return the userId for next steps
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+const isStrongPassword = (password) => {
+  // Example password strength requirements:
+  // At least 8 characters long
+  // Contains at least one uppercase letter
+  // Contains at least one lowercase letter
+  // Contains at least one digit
+  // Contains at least one special character
+  const passwordPattern =
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+  return passwordPattern.test(password);
+};
+exports.newPassword = [
+  // Validation and sanitization
+  check("userId").isMongoId().withMessage("Invalid user ID"),
+  check("newPassword")
+    .isLength({ min: 8 })
+    .withMessage("Password must be at least 8 characters long")
+    .custom((value) => isStrongPassword(value))
+    .withMessage("Password is not strong enough"),
+
+  // Route handler
+  async (req, res) => {
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ errors: errors.array() });
+    }
+
+    const { userId, newPassword } = req.body;
+    console.log("userid", userId);
+    if (!userId || !newPassword) {
+      return res
+        .status(400)
+        .json({ message: "User ID and new password are required" });
+    }
+
+    try {
+      // Find the user by ID
+      const user = await User.findById(userId);
+
+      if (!user) {
+        return res.status(404).json({ message: "User not found" });
+      }
+
+      // Update the user's password (assume hashing is handled elsewhere)
+      user.password = newPassword; // Password will be hashed before saving
+      await user.save();
+
+      res.status(200).json({ message: "Password updated successfully" });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Internal server error" });
+    }
+  },
+];

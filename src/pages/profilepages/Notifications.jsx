@@ -5,12 +5,15 @@ import { formatDistanceToNow } from "date-fns"; // For formatting dates
 const Notifications = () => {
   const [notifications, setNotifications] = useState([]);
   const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
+
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/user/Notification",
+          `http://localhost:5000/api/user/Notification`,
           {
+            params: { userId }, // Pass userId as query parameter
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -23,7 +26,7 @@ const Notifications = () => {
     };
 
     fetchNotifications();
-  }, []);
+  }, [token, userId]);
 
   const markAsRead = async (id) => {
     try {

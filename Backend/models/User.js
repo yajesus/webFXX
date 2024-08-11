@@ -10,7 +10,7 @@ const WalletSchema = new mongoose.Schema({
 const UserSchema = new mongoose.Schema({
   username: { type: String, unique: true, sparse: true },
   phoneNumber: { type: String, unique: true, sparse: true },
-  email: { type: String, unique: true, sparse: true },
+
   password: { type: String, required: true },
   withdrawalPassword: { type: String, required: true },
   balance: { type: Number, default: 0 },
@@ -19,6 +19,8 @@ const UserSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now },
   invitedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   invitationCode: { type: String, sparse: true },
+
+  submittedProducts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
 });
 
 // Password hashing for user and wallet password

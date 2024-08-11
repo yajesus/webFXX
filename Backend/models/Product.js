@@ -9,6 +9,7 @@ const ProductSchema = new mongoose.Schema({
   isPremium: { type: Boolean, default: false },
   visibleTo: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   createdAt: { type: Date, default: Date.now },
+  isApproved: { type: Boolean, default: false }, // Add approval status
 });
 
 module.exports = mongoose.model("Product", ProductSchema);

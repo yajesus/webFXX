@@ -8,7 +8,7 @@ const jwt = require("jsonwebtoken");
 const mongoose = require("mongoose");
 const Notification = require("../models/Notifications");
 const generateInviteCode = require("../middlewares/Invitecodemiddleware");
-
+const InviteCode = require("../models/Invitecode");
 exports.adminLogin = async (req, res) => {
   const { email, password } = req.body;
   try {
@@ -185,5 +185,114 @@ exports.userstransaction = async (req, res) => {
     res.status(200).json(transactions);
   } catch (err) {
     res.status(500).json({ message: err.message });
+  }
+};
+// Fetch details of all users
+exports.getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find()
+      .populate("invitedUsers", "username phoneNumber") // Populate invited users with username and phoneNumber
+      .populate("submittedProducts", "name") // Populate submitted products (assuming 'name' is a field in Product schema)
+      .select(
+        "username phoneNumber wallet balance invitedUsers submittedProducts"
+      ); // Select only required fields
+
+    res.status(200).json(users);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
+  }
+};
+exports.rejectWithdrawal = async (req, res) => {
+  const { withdrawalId } = req.body;
+
+  try {
+    const withdrawal = await Transaction.findById(withdrawalId);
+
+    if (!withdrawal) {
+      return res.status(404).json({ message: "Withdrawal request not found" });
+    }
+
+    if (withdrawal.status !== "pending") {
+      return res
+        .status(400)
+        .json({ message: "Only pending withdrawals can be rejected" });
+    }
+
+    withdrawal.status = "rejected";
+    await withdrawal.save();
+
+    res
+      .status(200)
+      .json({ message: "Withdrawal request rejected", withdrawal });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};
+// Approve user to submit products
+exports.approveUserToSubmitProducts = async (req, res) => {
+  try {
+    const { userId, productId } = req.body;
+    const user = await User.findById(userId).populate("submittedProducts");
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const product = user.submittedProducts.find(
+      (product) => product._id.toString() === productId && !product.isApproved
+    );
+
+    if (!product) {
+      return res
+        .status(400)
+        .json({ message: "Product not found or already approved" });
+    }
+
+    // Update product approval status
+    product.isApproved = true;
+    await product.save();
+
+    // Calculate profit and update user's balance
+    const profit = product.profit;
+    user.balance += profit;
+    await user.save();
+
+    res.status(200).json({
+      message: "Product approved successfully, balance updated",
+      balance: user.balance,
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+// Get users who have submitted products
+exports.getUsersWithSubmittedProducts = async (req, res) => {
+  try {
+    const users = await User.find()
+      .populate({
+        path: "submittedProducts",
+        match: { isApproved: false }, // Only include unapproved products
+      })
+      .exec();
+
+    // Filter out users who have no unapproved products left
+    const filteredUsers = users.filter(
+      (user) => user.submittedProducts.length > 0
+    );
+
+    res.status(200).json(filteredUsers);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+exports.getinvitecode = async (req, res) => {
+  try {
+    const inviteCodes = await InviteCode.find(); // Retrieve all invite codes
+    res.status(200).json(inviteCodes);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Internal server error" });
   }
 };

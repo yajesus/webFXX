@@ -128,9 +128,12 @@ const Login = ({ setIsLoggedIn }) => {
             </div>
             {error && <div className="text-red-500 mt-2">{error}</div>}
             <div className="w-full">
-              <p className="ml-8 text-blue-600 cursor-pointer">
+              <Link
+                className="ml-8 text-blue-600 cursor-pointer"
+                to="/Forgetpassword"
+              >
                 Forgot Password?
-              </p>
+              </Link>
             </div>
             <div className="w-full flex justify-center">
               <button

@@ -6,11 +6,11 @@ const Team = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-  const token = localStorage.getItem("token"); // Ensure token is properly set
-  const userId = localStorage.getItem("userId"); // Ensure userId is properly set
-  console.log(userId);
+  const token = localStorage.getItem("token");
+  const userId = localStorage.getItem("userId");
+
   useEffect(() => {
-    if (!token || !userId) return; // Skip fetching if token or userId is missing
+    if (!token || !userId) return;
 
     const fetchUsers = async () => {
       try {
@@ -18,14 +18,19 @@ const Team = () => {
           "http://localhost:5000/api/user/users-invited-by",
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Set Authorization header
+              Authorization: `Bearer ${token}`,
             },
             params: {
-              userId, // Pass userId as a query parameter
+              userId,
             },
           }
         );
-        setUsers(response.data);
+
+        if (response.data && response.data.length > 0) {
+          setUsers(response.data);
+        } else {
+          setUsers([]); // Set an empty array if no users were returned
+        }
       } catch (err) {
         setError(err.message);
       } finally {
@@ -40,7 +45,7 @@ const Team = () => {
     <main className="flex flex-col items-center p-6 space-y-6">
       {loading && (
         <div className="flex flex-col items-center justify-center w-full h-full space-y-4">
-          <div className="animate-spin border-4 border-t-4  border-gray-200 rounded-full w-12 h-12"></div>
+          <div className="animate-spin border-4 border-t-4 border-gray-200 rounded-full w-12 h-12"></div>
           <p className="text-lg text-gray-700">Loading...</p>
         </div>
       )}
@@ -54,16 +59,20 @@ const Team = () => {
           <h1 className="text-3xl font-semibold text-gray-800 mb-4">
             Team Members
           </h1>
-          <ul className="flex flex-wrap gap-4">
-            {users.map((user) => (
-              <li
-                key={user._id}
-                className="bg-blue-600 text-white px-4 py-2 rounded-lg text-center w-48"
-              >
-                {user.username}
-              </li>
-            ))}
-          </ul>
+          {users.length > 0 ? (
+            <ul className="flex flex-wrap gap-4">
+              {users.map((user) => (
+                <li
+                  key={user._id}
+                  className="bg-blue-600 text-white px-4 py-2 rounded-lg text-center w-48"
+                >
+                  {user.username}
+                </li>
+              ))}
+            </ul>
+          ) : (
+            <p className="text-gray-600 text-lg">No users invited</p>
+          )}
         </div>
       )}
     </main>
