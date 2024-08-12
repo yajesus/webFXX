@@ -53,13 +53,18 @@ router.post(
   adminController.approveUserToSubmitProducts
 );
 router.get(
-  "/users-submitted-products",
+  "/pending-products",
   authenticateAndAdmin,
-  adminController.getUsersWithSubmittedProducts
+  adminController.getPendingProducts
 );
 router.get(
   "/invite-codes",
   authenticateAndAdmin,
   adminController.getinvitecode
+);
+router.post(
+  "/toggle-product-user",
+  authenticateAndAdmin,
+  adminController.toggleProductSubmission
 );
 module.exports = router;

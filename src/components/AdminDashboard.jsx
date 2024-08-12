@@ -65,6 +65,14 @@ const AdminDashboard = () => {
               All Users Detail
             </Link>
           </div>
+          <div className="w-[300px] h-[150px] bg-blue-500 flex items-center justify-center rounded-lg shadow-lg hover:bg-blue-600 transition duration-300">
+            <Link
+              className="text-white hover:underline font-bold text-2xl"
+              to="/admin/dashboard/producttoggle"
+            >
+              Control Users Product Submission
+            </Link>
+          </div>
         </div>
       </main>
     </div>

@@ -166,7 +166,7 @@ const Login = ({ setIsLoggedIn }) => {
             className="w-[200px] h-[150px]"
           />
           <img
-            src={`${process.env.PUBLIC_URL}/binance.jpg`}
+            src={`${process.env.PUBLIC_URL}/shopify.jpg`}
             alt="Logo"
             className="w-[200px] h-[190px]"
           />

@@ -10,17 +10,17 @@ const WalletSchema = new mongoose.Schema({
 const UserSchema = new mongoose.Schema({
   username: { type: String, unique: true, sparse: true },
   phoneNumber: { type: String, unique: true, sparse: true },
-
+  isNew: { type: Boolean, default: true },
   password: { type: String, required: true },
   withdrawalPassword: { type: String, required: true },
-  balance: { type: Number, default: 0 },
+  balance: { type: Number, default: 30 },
   wallet: { type: WalletSchema }, // Embedding WalletSchema
   role: { type: String, default: "user", enum: ["user", "admin"] },
   createdAt: { type: Date, default: Date.now },
-  invitedUsers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   invitationCode: { type: String, sparse: true },
-
+  canSubmitProducts: { type: Boolean, default: true },
   submittedProducts: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
+  colorState: { type: String, default: "green" },
 });
 
 // Password hashing for user and wallet password

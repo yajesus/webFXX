@@ -10,8 +10,18 @@ import {
   faUser,
   faDatabase,
 } from "@fortawesome/free-solid-svg-icons";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 const Profile = () => {
+  const navigate = useNavigate();
+
+  const handleLogout = () => {
+    // Clear user token and userId from local storage
+    localStorage.removeItem("token");
+    localStorage.removeItem("userId");
+
+    // Redirect to the login page
+    navigate("/login");
+  };
   return (
     <main>
       <div
@@ -137,7 +147,10 @@ const Profile = () => {
             </div>
           </div>
           <div className="w-full flex justify-center ">
-            <button className="w-[60%] h-20 bg-red-600  absolute rounded-md text-white mt-5">
+            <button
+              className="w-[60%] h-20 bg-red-600  absolute rounded-md text-white mt-5"
+              onClick={handleLogout}
+            >
               Log out
             </button>
           </div>

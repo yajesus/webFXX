@@ -39,4 +39,9 @@ router.get("/users-invited-by", authuser, userController.getUsersInvitedBy);
 router.get("/events", authuser, userController.getAllEvents);
 router.post("/forgot-password", userController.forgotPassword);
 router.post("/newpassword", userController.newPassword);
+router.get(
+  "/withdrawal/status/:withdrawalId",
+  authuser,
+  userController.checkWithdrawalStatus
+);
 module.exports = router;

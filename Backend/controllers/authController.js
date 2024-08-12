@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const dotenv = require("dotenv");
 const { parsePhoneNumberFromString } = require("libphonenumber-js");
 const { body, validationResult } = require("express-validator");
-
+const Notification = require("../models/Notifications");
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -123,6 +123,19 @@ exports.login = [
 
       if (!user) {
         return res.status(400).json({ message: "User not found" });
+      }
+      // Check if user is new
+      if (user.isNew) {
+        // Set user as not new
+        user.isNew = false;
+        await user.save();
+
+        // Create a new notification
+        const notification = new Notification({
+          userId: user._id,
+          message: `Welcome! ${user.username} You have gained $10 welcome bouns and $20 tranining bonus.`,
+        });
+        await notification.save();
       }
       console.log("user find", user);
       console.log("your jwt scret", JWT_SECRET);

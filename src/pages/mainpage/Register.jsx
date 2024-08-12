@@ -132,7 +132,7 @@ const Register = () => {
           </div>
         </div>
 
-        <div className="w-[80%] md:w-[40%] lg:w-[30%] h-[100%] divsize rounded-md mt-48 absolute">
+        <div className="w-[80%] md:w-[40%] lg:w-[30%] h-[100%] divsize rounded-md mt-48 ">
           <div className="w-full flex justify-center">
             <p className="text-4xl text-blue-600 font-bold mt-6">Register</p>
           </div>
@@ -240,6 +240,23 @@ const Register = () => {
               </Link>
             </div>
           </form>
+        </div>
+        <div className="mt-9 bottom-0 w-full flex flex-col lg:flex-row justify-center lg:justify-start md:flex-row gap-5 items-center">
+          <img
+            src={`${process.env.PUBLIC_URL}/google.jpg`}
+            alt="Logo"
+            className="md:w-[200px] md:h-[150px] lg:w-[200px] lg:h-[150px] lg:ml-[250px] w-[400px] h-[250px]"
+          />
+          <img
+            src={`${process.env.PUBLIC_URL}/meta.jpg`}
+            alt="Logo"
+            className="w-[200px] h-[150px]"
+          />
+          <img
+            src={`${process.env.PUBLIC_URL}/shopify.jpg`}
+            alt="Logo"
+            className="w-[200px] h-[190px]"
+          />
         </div>
       </div>
     </main>

@@ -2,51 +2,53 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 
 const Approveuserproduct = () => {
-  const [users, setUsers] = useState([]);
+  const [pendingProducts, setPendingProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const token = localStorage.getItem("adminToken");
-
+  const userId = localStorage.getItem("userId");
   useEffect(() => {
-    const fetchUsers = async () => {
+    const fetchPendingProducts = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/admin/users-submitted-products",
+          "http://localhost:5000/api/admin/pending-products",
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-        setUsers(response.data);
+        setPendingProducts(response.data);
       } catch (err) {
-        setError("Failed to fetch users");
+        setError("Failed to fetch pending products");
         console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
-    fetchUsers();
+    fetchPendingProducts();
   }, [token]);
 
-  const handleApprove = async (userId) => {
+  const handleApprove = async (productId) => {
     try {
       await axios.post(
         "http://localhost:5000/api/admin/approve-user",
-        { userId },
+        { userId, productId }, // Pass the productId to the backend
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      setSuccess("User approved successfully!");
+      setSuccess("Product approved successfully!");
       setError("");
 
-      // Remove the approved user from the list
-      setUsers(users.filter((user) => user._id !== userId));
+      // Remove the approved product from the list
+      setPendingProducts(
+        pendingProducts.filter((product) => product.productId._id !== productId)
+      );
 
       setTimeout(() => setSuccess(""), 3000); // Clear success message after 3 seconds
     } catch (err) {
-      setError("Failed to approve user");
+      setError("Failed to approve product");
       setSuccess("");
       setTimeout(() => setError(""), 3000); // Clear error message after 3 seconds
       console.error(err);
@@ -56,7 +58,7 @@ const Approveuserproduct = () => {
   return (
     <div className="p-4 bg-gray-100 min-h-screen">
       <div className="max-w-4xl mx-auto bg-white p-6 rounded shadow-md">
-        <h1 className="text-2xl font-semibold mb-4">Approve Users</h1>
+        <h1 className="text-2xl font-semibold mb-4">Approve Products</h1>
 
         {loading ? (
           <div className="flex justify-center items-center">
@@ -72,22 +74,29 @@ const Approveuserproduct = () => {
           </div>
         ) : (
           <div className="space-y-4">
-            {users.length > 0 ? (
+            {pendingProducts.length > 0 ? (
               <ul>
-                {users.map((user) => (
+                {pendingProducts.map((item) => (
                   <li
-                    key={user._id}
+                    key={item._id}
                     className="p-4 bg-gray-50 rounded-md shadow-md flex justify-between items-center"
                   >
                     <div>
-                      <p className="text-lg font-semibold">{user.username}</p>
-                      <p className="text-gray-600">Email: {user.email}</p>
+                      <p className="text-lg font-semibold">
+                        {item.userId.username}
+                      </p>
+                      <p className="text-gray-600">
+                        Product: {item.productId.name}
+                      </p>
                       <p className="text-gray-500">
-                        Submitted Products: {user.submittedProducts.length}
+                        Description: {item.productId.description}
+                      </p>
+                      <p className="text-gray-500">
+                        Price: ${item.productId.price}
                       </p>
                     </div>
                     <button
-                      onClick={() => handleApprove(user._id)}
+                      onClick={() => handleApprove(item.productId._id)}
                       className="px-4 py-2 bg-blue-600 text-white font-semibold rounded-md hover:bg-blue-700"
                     >
                       Approve
@@ -96,7 +105,7 @@ const Approveuserproduct = () => {
                 ))}
               </ul>
             ) : (
-              <p className="text-gray-600">No users to show</p>
+              <p className="text-gray-600">No products to approve</p>
             )}
           </div>
         )}

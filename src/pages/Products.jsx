@@ -53,7 +53,15 @@ const Products = () => {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
-      setSuccess("Balance updated successfully");
+
+      if (
+        response.data.message ===
+        "Product submission is pending admin approval."
+      ) {
+        setSuccess("Product is pending admin approval");
+      } else {
+        setSuccess("Balance updated successfully");
+      }
       setError("");
       setTimeout(() => setSuccess(""), 3000);
 

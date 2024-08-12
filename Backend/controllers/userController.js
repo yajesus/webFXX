@@ -8,6 +8,7 @@ const UserInviteCode = require("../models/Userinvitecode");
 const crypto = require("crypto");
 const Events = require("../models/Event");
 const { check, validationResult } = require("express-validator");
+const PendingApproval = require("../models/Pendingapproval");
 // Utility function to validate wallet address
 const validateWalletName = (name) => {
   // Example: Wallet name must be between 3 and 50 characters and only contain alphanumeric characters and spaces
@@ -50,7 +51,6 @@ exports.bindWallet = async (req, res) => {
     res.status(500).json({ message: err.message });
   }
 };
-
 exports.submitTask = async (req, res) => {
   const { userId, productId } = req.body;
 
@@ -58,37 +58,44 @@ exports.submitTask = async (req, res) => {
     // Find the user and the product
     const user = await User.findById(userId);
     const product = await Product.findById(productId);
-
+    if (!user.canSubmitProducts) {
+      return res
+        .status(403)
+        .json({ message: "You are not allowed to submit products" });
+    }
     if (!user || !product) {
       return res.status(404).json({ message: "User or product not found" });
     }
 
-    // Check if the product is premium
+    // Handle premium products and low balance submissions
+    if (user.balance < 100) {
+      return res.status(404).json({
+        message: "Contact customer service.",
+      });
+    }
     if (product.isPremium) {
-      // Contact customer service for premium products
-      // Replace this with actual logic for contacting customer service
-      console.log(
-        `Contacting customer service for user ${userId} and product ${productId}`
-      );
-      // You may use a service or send an email here
-      return res.status(400).json({ message: "Contact customer services" });
+      const pendingApproval = new PendingApproval({
+        userId,
+        productId,
+        isApproved: false,
+      });
+      await pendingApproval.save();
+
+      return res.status(200).json({
+        message: "Product submission is pending admin approval.",
+      });
     }
 
-    // Check user's balance
-    if (product.isPremium || user.balance >= 100) {
-      // Add the product to the user's submitted products
-      user.submittedProducts.push(productId);
+    // For non-premium products with sufficient balance
+    user.submittedProducts.push(productId);
+    user.balance += product.profit;
 
-      await user.save();
+    await user.save();
 
-      return res
-        .status(200)
-        .json({ message: "Product submitted successfully" });
-    } else {
-      return res
-        .status(400)
-        .json({ message: "Insufficient balance for non-premium product" });
-    }
+    return res.status(200).json({
+      message: "Product submitted successfully, balance updated",
+      balance: user.balance,
+    });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ message: "An error occurred" });
@@ -439,3 +446,27 @@ exports.newPassword = [
     }
   },
 ];
+exports.checkWithdrawalStatus = async (req, res) => {
+  const { withdrawalId } = req.params;
+
+  try {
+    // Find the withdrawal transaction by its ID
+    const withdrawal = await Transaction.findById(withdrawalId).populate(
+      "user"
+    );
+
+    // If the transaction is not found, return an error
+    if (!withdrawal) {
+      return res.status(404).json({ message: "Withdrawal not found" });
+    }
+
+    // Return the withdrawal status
+    res.status(200).json({
+      status: withdrawal.status,
+      amount: withdrawal.amount,
+      date: withdrawal.createdAt,
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

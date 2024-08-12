@@ -9,10 +9,12 @@ const mongoose = require("mongoose");
 const Notification = require("../models/Notifications");
 const generateInviteCode = require("../middlewares/Invitecodemiddleware");
 const InviteCode = require("../models/Invitecode");
+const PendingApproval = require("../models/Pendingapproval");
 exports.adminLogin = async (req, res) => {
   const { email, password } = req.body;
   try {
     const admin = await Admin.findOne({ email });
+    console.log(admin);
     console.log("Login request received with email:", email);
     if (!admin) {
       return res.status(400).json({ message: "Admin not found" });
@@ -113,6 +115,11 @@ exports.editUserBalance = async (req, res) => {
     }
     user.balance += amount;
     await user.save();
+    const notification = new Notification({
+      userId: user._id,
+      message: `Your Balance has been edited now your balance is ${user.balance} `,
+    });
+    await notification.save();
     res.status(200).send(user);
   } catch (err) {
     res.status(500).json({ message: err.message });
@@ -121,22 +128,55 @@ exports.editUserBalance = async (req, res) => {
 
 exports.approveWithdrawal = async (req, res) => {
   const { withdrawalId } = req.body;
-  console.log(withdrawalId);
+
   try {
-    const withdrawal = await Transaction.findById(withdrawalId);
+    // Find the withdrawal transaction by its ID
+    const withdrawal = await Transaction.findById(withdrawalId).populate(
+      "user"
+    );
+
+    // If the transaction is not found, return an error
+    if (!withdrawal) {
+      return res.status(404).json({ message: "Withdrawal not found" });
+    }
+
+    // Check if the transaction is of type "withdrawal"
+    if (withdrawal.type !== "withdrawal") {
+      return res.status(400).json({ message: "Invalid transaction type" });
+    }
+
+    // Check if the withdrawal has already been approved
+    if (withdrawal.status === "approved") {
+      return res.status(400).json({ message: "Withdrawal already approved" });
+    }
+
+    // Find the user associated with this withdrawal
+    const user = withdrawal.user;
+
+    // Check if the user has sufficient balance
+    if (user.balance < withdrawal.amount) {
+      return res.status(400).json({ message: "Insufficient balance" });
+    }
+
+    // Subtract the withdrawal amount from the user's balance
+    user.balance -= withdrawal.amount;
+
+    // Save the updated user balance
+    await user.save();
+
+    // Update the withdrawal status to 'approved'
     withdrawal.status = "approved";
     await withdrawal.save();
-    // Notify all users
-    const users = await User.find({}, "_id");
-    const notifications = users.map(
-      (user) =>
-        new Notification({
-          userId: user._id,
-          message: `A withdrawal request has been approved`,
-        })
-    );
-    await Notification.insertMany(notifications);
-    res.status(200).send(withdrawal);
+
+    // Notify the user who made the withdrawal request
+    const notification = new Notification({
+      userId: user._id,
+      message: `Your withdrawal request of ${withdrawal.amount} has been approved`,
+    });
+    await notification.save();
+
+    // Return the updated withdrawal
+    res.status(200).json(withdrawal);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -191,11 +231,9 @@ exports.userstransaction = async (req, res) => {
 exports.getAllUsers = async (req, res) => {
   try {
     const users = await User.find()
-      .populate("invitedUsers", "username phoneNumber") // Populate invited users with username and phoneNumber
+      .populate("username phoneNumber") // Populate invited users with username and phoneNumber
       .populate("submittedProducts", "name") // Populate submitted products (assuming 'name' is a field in Product schema)
-      .select(
-        "username phoneNumber wallet balance invitedUsers submittedProducts"
-      ); // Select only required fields
+      .select("username phoneNumber wallet balance  submittedProducts"); // Select only required fields
 
     res.status(200).json(users);
   } catch (err) {
@@ -233,27 +271,36 @@ exports.rejectWithdrawal = async (req, res) => {
 exports.approveUserToSubmitProducts = async (req, res) => {
   try {
     const { userId, productId } = req.body;
-    const user = await User.findById(userId).populate("submittedProducts");
 
-    if (!user) return res.status(404).json({ message: "User not found" });
+    // Find the pending approval record
+    const pendingApproval = await PendingApproval.findOne({
+      userId,
+      productId,
+      isApproved: false,
+    });
 
-    const product = user.submittedProducts.find(
-      (product) => product._id.toString() === productId && !product.isApproved
-    );
-
-    if (!product) {
+    if (!pendingApproval) {
       return res
         .status(400)
-        .json({ message: "Product not found or already approved" });
+        .json({ message: "Pending product not found or already approved" });
     }
 
-    // Update product approval status
-    product.isApproved = true;
-    await product.save();
+    // Mark as approved
+    pendingApproval.isApproved = true;
+    await pendingApproval.save();
 
-    // Calculate profit and update user's balance
-    const profit = product.profit;
-    user.balance += profit;
+    // Now find the user and product to update them
+    const user = await User.findById(userId);
+    const product = await Product.findById(productId);
+
+    if (!user || !product) {
+      return res.status(404).json({ message: "User or product not found" });
+    }
+
+    // Add the product to the user's submitted products and update balance
+    user.submittedProducts.push(productId);
+    user.balance += product.profit;
+
     await user.save();
 
     res.status(200).json({
@@ -267,24 +314,18 @@ exports.approveUserToSubmitProducts = async (req, res) => {
 };
 
 // Get users who have submitted products
-exports.getUsersWithSubmittedProducts = async (req, res) => {
+exports.getPendingProducts = async (req, res) => {
   try {
-    const users = await User.find()
-      .populate({
-        path: "submittedProducts",
-        match: { isApproved: false }, // Only include unapproved products
-      })
-      .exec();
+    const pendingProducts = await PendingApproval.find({ isApproved: false })
+      .populate("userId", "username email")
+      .populate("productId", "name description price profit isPremium");
 
-    // Filter out users who have no unapproved products left
-    const filteredUsers = users.filter(
-      (user) => user.submittedProducts.length > 0
-    );
-
-    res.status(200).json(filteredUsers);
+    res.status(200).json(pendingProducts);
   } catch (err) {
     console.error(err);
-    res.status(500).json({ message: "Server error" });
+    res
+      .status(500)
+      .json({ message: "An error occurred while fetching pending products" });
   }
 };
 exports.getinvitecode = async (req, res) => {
@@ -294,5 +335,28 @@ exports.getinvitecode = async (req, res) => {
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Internal server error" });
+  }
+};
+exports.toggleProductSubmission = async (req, res) => {
+  const { userId, canSubmitProducts, colorState } = req.body;
+
+  try {
+    if (!userId || typeof canSubmitProducts !== "boolean" || !colorState) {
+      return res.status(400).json({ message: "Invalid input data" });
+    }
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    user.canSubmitProducts = canSubmitProducts;
+    user.colorState = colorState; // Update color state
+    await user.save();
+
+    res.status(200).json({ message: "User updated successfully", user });
+  } catch (error) {
+    console.error("Server error:", error);
+    res.status(500).json({ message: "Server error", error: error.message });
   }
 };

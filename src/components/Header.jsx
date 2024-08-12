@@ -10,14 +10,16 @@ const Header = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const dropdownRef = useRef(null);
   const token = localStorage.getItem("token");
-
+  const userId = localStorage.getItem("userId");
   // Fetch notifications and unread count on component mount
+  console.log(token);
   useEffect(() => {
     const fetchNotifications = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/user/Notification",
+          `http://localhost:5000/api/user/Notification`,
           {
+            params: { userId }, // Pass userId as query parameter
             headers: {
               Authorization: `Bearer ${token}`,
             },
@@ -25,7 +27,10 @@ const Header = () => {
         );
         const data = response.data;
         setNotifications(data);
-        setUnreadCount(data.filter((n) => !n.read).length);
+
+        // Calculate unread notifications
+        const unread = data.filter((n) => !n.read).length;
+        setUnreadCount(unread);
       } catch (err) {
         console.error("Failed to fetch notifications", err);
       }
@@ -39,19 +44,17 @@ const Header = () => {
       try {
         // Fetch notifications when opening the dropdown
         const response = await axios.get(
-          "http://localhost:5000/api/user/Notification",
+          `http://localhost:5000/api/user/Notification`,
           {
+            params: { userId }, // Pass userId as query parameter
             headers: {
               Authorization: `Bearer ${token}`,
             },
           }
         );
         const data = response.data;
+        console.log(data);
         setNotifications(data);
-
-        // Update unread notifications count
-        const unread = data.filter((n) => !n.read).length;
-        setUnreadCount(unread);
 
         // Collect IDs of unread notifications
         const unreadNotifications = data.filter((n) => !n.read);
@@ -68,9 +71,11 @@ const Header = () => {
               },
             }
           );
-          // Remove marked notifications from the list
+          // Update notifications to set read state
           setNotifications((prev) =>
-            prev.filter((n) => !unreadIds.includes(n._id))
+            prev.map((n) =>
+              unreadIds.includes(n._id) ? { ...n, read: true } : n
+            )
           );
           setUnreadCount(0); // Set unread count to 0 after marking as read
         }
@@ -110,7 +115,7 @@ const Header = () => {
               <button onClick={handleBellClick} className="relative">
                 <FontAwesomeIcon icon={faBell} className="mr-5 text-2xl" />
                 {unreadCount > 0 && !isOpen && (
-                  <span className="relative -top-3 left-[-20px] inline-flex items-center justify-center w-4 h-4 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
+                  <span className="absolute top-0 right-0 -translate-x-1/2 translate-y-1/2 inline-flex items-center justify-center w-4 h-4 text-xs font-bold leading-none text-white bg-red-600 rounded-full">
                     {unreadCount}
                   </span>
                 )}
@@ -127,12 +132,17 @@ const Header = () => {
                     ) : (
                       notifications.map((notification) => (
                         <div
-                          key={notification._id} // Use _id for unique key
-                          className={`p-2 border-b border-gray-200 ${
+                          key={notification._id}
+                          className={`relative p-2 border-b border-gray-200 ${
                             notification.read ? "bg-gray-100" : "bg-white"
                           }`}
                         >
-                          <p className="font-semibold">{notification.title}</p>
+                          <p className="font-semibold">
+                            {notification.title}
+                            {!notification.read && (
+                              <span className="absolute top-1.5 right-2 transform -translate-y-1/2 w-3 h-3 bg-green-500 rounded-full"></span>
+                            )}
+                          </p>
                           <p className="text-sm text-gray-600">
                             {notification.message}
                           </p>

@@ -6,6 +6,7 @@ const Usersdetail = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [dropdownOpen, setDropdownOpen] = useState(null); // Track which user's dropdown is open
+  const [invitedUsers, setInvitedUsers] = useState({}); // Store invited users by userId
   const token = localStorage.getItem("adminToken");
 
   useEffect(() => {
@@ -15,7 +16,7 @@ const Usersdetail = () => {
           "http://localhost:5000/api/admin/users",
           {
             headers: {
-              Authorization: `Bearer ${token}`, // Add the token to the Authorization header
+              Authorization: `Bearer ${token}`,
             },
           }
         );
@@ -28,13 +29,38 @@ const Usersdetail = () => {
     };
 
     fetchUsers();
-  }, []);
+  }, [token]);
+
+  const fetchInvitedUsers = async (userId) => {
+    try {
+      const response = await axios.get(
+        "http://localhost:5000/api/user/users-invited-by",
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          params: {
+            userId,
+          },
+        }
+      );
+      setInvitedUsers((prev) => ({
+        ...prev,
+        [userId]: response.data,
+      }));
+    } catch (err) {
+      console.error("Failed to fetch invited users", err);
+    }
+  };
 
   const toggleDropdown = (userId) => {
     if (dropdownOpen === userId) {
       setDropdownOpen(null); // Close dropdown if already open
     } else {
       setDropdownOpen(userId); // Open dropdown for the selected user
+      if (!invitedUsers[userId]) {
+        fetchInvitedUsers(userId); // Fetch invited users if not already fetched
+      }
     }
   };
 
@@ -77,35 +103,42 @@ const Usersdetail = () => {
                       {user.wallet?.walletAddress || "N/A"}
                     </td>
                     <td className="py-2 px-4 border-b">
-                      {user.invitedUsers.length > 0 ? (
-                        <>
-                          <button
-                            onClick={() => toggleDropdown(user._id)}
-                            className="text-blue-600 hover:underline"
-                          >
-                            {user.invitedUsers.length} Invited User
-                            {user.invitedUsers.length > 1 ? "s" : ""}
-                          </button>
-                          {dropdownOpen === user._id && (
-                            <div className="relative">
-                              <div className="absolute bg-white border rounded shadow-lg mt-2 p-2 w-48 z-10">
-                                {user.invitedUsers.map((invitedUser) => (
-                                  <p
-                                    key={invitedUser._id}
-                                    className="text-gray-800"
-                                  >
-                                    {invitedUser.username} - Wallet:{" "}
-                                    {invitedUser.wallet?.name || "N/A"} (
-                                    {invitedUser.wallet?.address || "N/A"})
-                                  </p>
-                                ))}
-                              </div>
-                            </div>
-                          )}
-                        </>
-                      ) : (
-                        "None"
-                      )}
+                      <div className="relative">
+                        <button
+                          onClick={() => toggleDropdown(user._id)}
+                          className="bg-blue-600 text-white px-3 py-1 rounded"
+                        >
+                          {dropdownOpen === user._id ? "Hide" : "Show"} Invited
+                          Users
+                        </button>
+                        {dropdownOpen === user._id && (
+                          <div className="absolute bg-white border rounded shadow-lg mt-2 p-2 w-48 z-10">
+                            {invitedUsers[user._id] ? (
+                              invitedUsers[user._id].length > 0 ? (
+                                invitedUsers[user._id].map(
+                                  (invitedUser, index) => (
+                                    <div key={invitedUser._id}>
+                                      <p className="text-gray-800">
+                                        {invitedUser.username}
+                                      </p>
+                                      {index <
+                                        invitedUsers[user._id].length - 1 && (
+                                        <hr className="my-2" />
+                                      )}
+                                    </div>
+                                  )
+                                )
+                              ) : (
+                                <p className="text-gray-600">
+                                  No invited users
+                                </p>
+                              )
+                            ) : (
+                              <p className="text-gray-600">Loading...</p>
+                            )}
+                          </div>
+                        )}
+                      </div>
                     </td>
                     <td className="py-2 px-4 border-b">
                       {user.submittedProducts.length}
