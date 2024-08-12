@@ -52,6 +52,21 @@ const Edituserbalance = ({ token }) => {
           },
         }
       );
+      // Post the transaction to the transaction history
+      await axios.post(
+        "http://localhost:5000/api/admin/posttransaction",
+        {
+          userId: selectedUser,
+          amount: parseFloat(amount),
+          type: "deposit", // Always deposit
+          status: "approved", // or any status you need
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${adminToken}`,
+          },
+        }
+      );
       setSuccess("User balance updated successfully");
       setError("");
       setTimeout(() => setSuccess(""), 3000);

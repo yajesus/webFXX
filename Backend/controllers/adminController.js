@@ -360,3 +360,32 @@ exports.toggleProductSubmission = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
+exports.postTransaction = async (req, res) => {
+  const { userId, amount, type, status } = req.body;
+
+  try {
+    // Validate the type
+    if (!["deposit", "withdrawal"].includes(type)) {
+      return res.status(400).json({ message: "Invalid transaction type" });
+    }
+
+    // Validate the status
+    if (!["pending", "approved", "rejected"].includes(status)) {
+      return res.status(400).json({ message: "Invalid transaction status" });
+    }
+
+    // Create a new transaction record
+    const transaction = new Transaction({
+      user: userId,
+      amount,
+      type,
+      status,
+    });
+
+    await transaction.save();
+
+    res.status(201).json(transaction);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+};

@@ -298,6 +298,7 @@ exports.getInviteCode = async (req, res) => {
     const inviteCode = await UserInviteCode.findOne({ createdBy: userId }).sort(
       { createdAt: -1 }
     );
+    console.log("invite code", inviteCode);
     if (!inviteCode) {
       return res.status(404).json({ message: "No invite code found" });
     }

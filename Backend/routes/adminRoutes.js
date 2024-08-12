@@ -67,4 +67,9 @@ router.post(
   authenticateAndAdmin,
   adminController.toggleProductSubmission
 );
+router.post(
+  "/posttransaction",
+  authenticateAndAdmin,
+  adminController.postTransaction
+);
 module.exports = router;

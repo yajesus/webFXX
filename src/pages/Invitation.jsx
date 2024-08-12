@@ -8,7 +8,6 @@ const Invitation = () => {
 
   const token = localStorage.getItem("token"); // Ensure token is properly set
   const userId = localStorage.getItem("userId"); // Ensure userId is properly set
-  console.log("userid", userId);
 
   useEffect(() => {
     if (!token || !userId) return; // Skip fetching if token or userId is missing
@@ -26,6 +25,7 @@ const Invitation = () => {
             },
           }
         );
+        console.log(response.data);
         setReferralCode(response.data.code);
       } catch (error) {
         console.error("Error fetching referral code:", error);
@@ -37,6 +37,7 @@ const Invitation = () => {
 
   const handleGenerateCode = async () => {
     try {
+      // Post request to generate new invite code
       await axios.post(
         "http://localhost:5000/api/user/generate-invite-code",
         { userId }, // Send userId in request body
@@ -47,6 +48,7 @@ const Invitation = () => {
         }
       );
       setGenerateStatus("Invite code generated!");
+
       // Refresh the referral code after generation
       const response = await axios.get(
         "http://localhost:5000/api/user/invite-code",

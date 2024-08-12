@@ -9,6 +9,7 @@ const userInviteCodeSchema = new mongoose.Schema({
   },
   usedBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   expiresAt: { type: Date, required: true },
+  createdAt: { type: Date, default: Date.now },
 });
 
 module.exports = mongoose.model("UserInviteCode", userInviteCodeSchema);
