@@ -11,9 +11,10 @@ import {
   faDatabase,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link, useNavigate } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 const Profile = () => {
   const navigate = useNavigate();
-
+  const { t } = useTranslation();
   const handleLogout = () => {
     // Clear user token and userId from local storage
     localStorage.removeItem("token");
@@ -45,7 +46,7 @@ const Profile = () => {
                 to="/Customerservice"
                 class=" hover:text-blue-500 hover:underline font-bold "
               >
-                Deposit
+                {t("deposit")}
               </Link>
             </div>
             <div className="flex flex-col items-center gap-2">
@@ -56,7 +57,7 @@ const Profile = () => {
                 to="/withdrawal"
                 class=" hover:text-blue-500 hover:underline font-bold "
               >
-                Withdrwal
+                {t("withdrawal")}
               </Link>
             </div>
             <div className="flex flex-col items-center gap-2">
@@ -70,7 +71,7 @@ const Profile = () => {
                 to="/Team"
                 class=" hover:text-blue-500 hover:underline font-bold "
               >
-                My Team
+                {t("myTeam")}
               </Link>
             </div>
             <div className="flex flex-col items-center gap-2">
@@ -81,7 +82,7 @@ const Profile = () => {
                 to="/Wallet"
                 class=" hover:text-blue-500 hover:underline font-bold "
               >
-                Bind Wallet
+                {t("bindWallet")}
               </Link>
             </div>
             <div className="flex flex-col items-center gap-2">
@@ -92,7 +93,7 @@ const Profile = () => {
                 to="/Changepass"
                 class=" hover:text-blue-500 hover:underline font-bold "
               >
-                Change Password
+                {t("changePassword")}
               </Link>
             </div>
             <div className="flex flex-col items-center gap-2">
@@ -106,7 +107,7 @@ const Profile = () => {
                 to="/Transaction"
                 class=" hover:text-blue-500 hover:underline font-bold "
               >
-                Transaction
+                {t("transaction")}
               </Link>
             </div>
             <div className="flex flex-col items-center gap-2">
@@ -117,7 +118,7 @@ const Profile = () => {
                 to="/Customerservice"
                 class=" hover:text-blue-500 hover:underline font-bold "
               >
-                Customer Service
+                {t("customerService")}
               </Link>
             </div>
             <div className="flex flex-col items-center gap-2">
@@ -128,7 +129,7 @@ const Profile = () => {
                 to="/Notification"
                 class=" hover:text-blue-500 hover:underline font-bold "
               >
-                Notifications
+                {t("notifications")}
               </Link>
             </div>
             <div className="flex flex-col items-center gap-2">
@@ -142,7 +143,7 @@ const Profile = () => {
                 to="/invitation"
                 class=" hover:text-blue-500 hover:underline font-bold "
               >
-                Invitation
+                {t("invitation")}
               </Link>
             </div>
           </div>
@@ -151,7 +152,7 @@ const Profile = () => {
               className="w-[60%] h-20 bg-red-600  absolute rounded-md text-white mt-5"
               onClick={handleLogout}
             >
-              Log out
+              {t("logout")}
             </button>
           </div>
         </div>

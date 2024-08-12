@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import { useTranslation } from "react-i18next";
 const BindWallet = () => {
   const [walletName, setWalletName] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
@@ -9,7 +9,7 @@ const BindWallet = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const navigate = useNavigate();
-
+  const { t } = useTranslation();
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
@@ -60,8 +60,8 @@ const BindWallet = () => {
   return (
     <main>
       <div className="flex flex-col w-full justify-center items-center">
-        <div className="w-full flex justify-center">
-          <p className="text-4xl font-bold">Bind your Wallet</p>
+        <div className="w-full flex justify-center mt-14">
+          <p className="text-4xl font-bold">{t("bind_your_wallet")}</p>
         </div>
         <form
           className="w-[60%] flex flex-col gap-5 mt-7"
@@ -70,7 +70,7 @@ const BindWallet = () => {
           {error && <p className="text-red-600">{error}</p>}
           {success && <p className="text-green-600">{success}</p>}
           <div className="w-full gap-1 flex flex-col">
-            <label className="font-semibold">Wallet Name</label>
+            <label className="font-semibold">{t("walletName")}</label>
             <input
               type="text"
               className="w-full divsize h-14 p-4 rounded-md"
@@ -80,7 +80,7 @@ const BindWallet = () => {
             />
           </div>
           <div className="w-full gap-1 flex flex-col">
-            <label className="font-semibold">Wallet Address</label>
+            <label className="font-semibold">{t("walletAddress")}</label>
             <input
               type="text"
               className="w-full divsize h-14 p-4 rounded-md"
@@ -90,7 +90,7 @@ const BindWallet = () => {
             />
           </div>
           <div className="w-full gap-1 flex flex-col">
-            <label className="font-semibold">Wallet Password</label>
+            <label className="font-semibold">{t("walletPassword")}</label>
             <input
               type="password"
               className="w-full divsize h-14 p-4 rounded-md"
@@ -103,7 +103,7 @@ const BindWallet = () => {
             className="w-full h-14 bg-red-700 rounded-2xl text-white font-semibold text-xl"
             type="submit"
           >
-            Confirm
+            {t("confirm")}
           </button>
         </form>
       </div>

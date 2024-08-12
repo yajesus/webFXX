@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-
+import { useTranslation } from "react-i18next";
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [currentProductIndex, setCurrentProductIndex] = useState(null); // Start as null to show logo initially
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [progress, setProgress] = useState(0);
-
+  const { t } = useTranslation();
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -105,12 +105,14 @@ const Products = () => {
             alt="Logo"
             className="w-[160px] h-[140px] mt-2 ml-2"
           />
-          <p className="text-4xl text-blue-600 font-bold mt-4">Boost Mission</p>
+          <p className="text-4xl text-blue-600 font-bold mt-4">
+            {t("boost_mission")}
+          </p>
           <button
             onClick={handleStartNow}
             className="w-[60%] h-20 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 mt-4 text-3xl font-bold"
           >
-            Start Now ({progress}/{products.length})
+            {t("start_now")} ({progress}/{products.length})
           </button>
         </>
       ) : (

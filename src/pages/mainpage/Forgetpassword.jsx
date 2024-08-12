@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-
+import { useTranslation } from "react-i18next";
 const Forgetpassword = ({ isForgetpassword, setIsForgetpassword }) => {
   const [username, setUsername] = useState("");
   const [invitationCode, setInvitationCode] = useState("");
   const [success, setSuccess] = useState("");
   const [error, setError] = useState("");
   const navigate = useNavigate();
-
+  const { t } = useTranslation();
   const handleRegister = async (e) => {
     e.preventDefault();
 
@@ -52,28 +52,32 @@ const Forgetpassword = ({ isForgetpassword, setIsForgetpassword }) => {
       </div>
       <div className="w-[80%] md:w-[70%] lg:w-[30%] h-[300px] divsize rounded-md mt-20">
         <div className="w-full flex justify-center">
-          <p className="text-4xl text-blue-600 font-bold mt-6">Add Details</p>
+          <p className="text-4xl text-blue-600 font-bold mt-6">
+            {t("add_details")}
+          </p>
         </div>
         <form
           className="w-full flex flex-col items-center mt-6 gap-3"
           onSubmit={handleRegister}
         >
           <div className="w-full flex flex-col">
-            <label className="md:ml-6 ml-8 lg:ml-8">Username</label>
+            <label className="md:ml-6 ml-8 lg:ml-8">{t("username")}</label>
             <input
               type="text"
               className="w-[80%] h-10 divsize md:ml-6 ml-8 lg:ml-8 rounded-md p-4 focus:outline-blue-600"
-              placeholder="Username"
+              placeholder={t("username")}
               value={username}
               onChange={(e) => setUsername(e.target.value)}
             />
           </div>
           <div className="w-full flex flex-col">
-            <label className="md:ml-6 ml-8 lg:ml-8">Invitation Code</label>
+            <label className="md:ml-6 ml-8 lg:ml-8">
+              {t("invitation_code")}
+            </label>
             <input
               type="text"
               className="w-[80%] h-10 divsize md:ml-6 ml-8 lg:ml-8 rounded-md p-4 focus:outline-blue-600"
-              placeholder="Invitation Code"
+              placeholder={t("invitation_code")}
               value={invitationCode}
               onChange={(e) => setInvitationCode(e.target.value)}
             />
@@ -85,7 +89,7 @@ const Forgetpassword = ({ isForgetpassword, setIsForgetpassword }) => {
               className="w-[80%] h-10 bg-blue-600 rounded-md text-white"
               type="submit"
             >
-              Submit
+              {t("submit")}
             </button>
           </div>
         </form>

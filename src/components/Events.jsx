@@ -11,9 +11,10 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Recharge from "./Recharge";
 import { Link } from "react-router-dom";
-
+import { useTranslation } from "react-i18next";
 const Events = () => {
   const [showrecharge, setShowrecharge] = useState(false);
+  const { t } = useTranslation();
   function show() {
     setShowrecharge(!showrecharge);
   }
@@ -30,7 +31,7 @@ const Events = () => {
               to="/event"
               class=" hover:text-blue-500 hover:underline font-bold "
             >
-              Event
+              {t("event")}
             </Link>
           </div>
           <div className="w-[150px] h-[100px] rounded-md divsize flex flex-col justify-center items-center">
@@ -42,7 +43,7 @@ const Events = () => {
               class=" hover:text-blue-500 hover:underline cursor-pointer font-bold"
               onClick={show}
             >
-              Recharge
+              {t("recharge")}
             </p>
           </div>
           <div className="w-[150px] h-[100px] rounded-md divsize flex flex-col justify-center items-center">
@@ -51,7 +52,7 @@ const Events = () => {
               to="/withdrawal"
               class=" hover:text-blue-500 hover:underline font-bold "
             >
-              Withdrawl
+              {t("withdrawal")}
             </Link>
           </div>
           <div className="w-[150px] h-[100px] rounded-md divsize flex flex-col justify-center items-center">
@@ -63,7 +64,7 @@ const Events = () => {
               to="/invitation"
               class=" hover:text-blue-500 hover:underline font-bold "
             >
-              Invitation
+              {t("invitation")}
             </Link>
           </div>
           <div className="w-[150px] h-[100px] rounded-md divsize flex flex-col justify-center items-center">
@@ -72,7 +73,7 @@ const Events = () => {
               to="/company"
               class=" hover:text-blue-500 hover:underline font-bold "
             >
-              Company
+              {t("company")}
             </Link>
           </div>
           <div className="w-[150px] h-[100px] rounded-md divsize flex flex-col justify-center items-center">
@@ -81,7 +82,7 @@ const Events = () => {
               to="/Tc"
               class=" hover:text-blue-500 hover:underline font-bold "
             >
-              T&C
+              {t("tc")}
             </Link>
           </div>
           <div className="w-[150px] h-[100px] rounded-md divsize flex flex-col justify-center items-center">
@@ -93,7 +94,7 @@ const Events = () => {
               to="/FAQ"
               class=" hover:text-blue-500 hover:underline font-bold "
             >
-              FAQs
+              {t("faqs")}
             </Link>
           </div>
         </div>

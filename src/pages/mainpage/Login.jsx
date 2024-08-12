@@ -8,15 +8,16 @@ import {
   faPhoneVolume,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
-
+import { useTranslation } from "react-i18next";
 const Login = ({ setIsLoggedIn }) => {
   const [identifier, setIdentifier] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
   const [eyeshow, setEyeshow] = useState(false);
+  const [showOptions, setShowOptions] = useState(false);
   const navigate = useNavigate();
-
+  const { t, i18n } = useTranslation();
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -64,10 +65,46 @@ const Login = ({ setIsLoggedIn }) => {
       passwordInput.type = "password";
     }
   };
-
+  const handleLanguageChange = (language) => {
+    i18n.changeLanguage(language);
+    setShowOptions(false); // Close the dropdown after selection
+  };
   return (
     <main>
-      <div className="w-full h-full flex flex-col justify-center items-center">
+      <div className="w-full h-full flex flex-col  items-center">
+        <div className="w-full flex justify-end absolute z-50 mt-5 -ml-5">
+          <div className="flex items-center gap-1">
+            <FontAwesomeIcon icon={faPhoneVolume} className="text-xl" />
+            <button
+              onClick={() => setShowOptions(!showOptions)}
+              className="text-black hover:text-blue-600 hover:underline focus:outline-none font-bold"
+            >
+              {t("language")}
+            </button>
+            {showOptions && (
+              <ul className="absolute mt-10 bg-white border rounded shadow-lg ">
+                <li
+                  onClick={() => handleLanguageChange("en")}
+                  className="cursor-pointer p-2 hover:bg-blue-100"
+                >
+                  English
+                </li>
+                <li
+                  onClick={() => handleLanguageChange("es")}
+                  className="cursor-pointer p-2 hover:bg-blue-100"
+                >
+                  Español
+                </li>
+                <li
+                  onClick={() => handleLanguageChange("de")}
+                  className="cursor-pointer p-2 hover:bg-blue-100"
+                >
+                  Deutsch
+                </li>
+              </ul>
+            )}
+          </div>
+        </div>
         <div className="w-full h-12 flex justify-center">
           <img
             src={`${process.env.PUBLIC_URL}/logo.png`}
@@ -83,24 +120,28 @@ const Login = ({ setIsLoggedIn }) => {
         </div>
         <div className="w-[80%] md:w-[70%] lg:w-[30%] h-[400px] divsize rounded-md mt-10">
           <div className="w-full flex justify-center">
-            <p className="text-4xl text-blue-600 font-bold mt-6">Login</p>
+            <p className="text-4xl text-blue-600 font-bold mt-6">
+              {t("login")}
+            </p>
           </div>
           <form
             className="w-full flex flex-col items-center mt-6 gap-3"
             onSubmit={handleLogin}
           >
             <div className="w-full flex flex-col">
-              <label className="md:ml-6 ml-8 lg:ml-8">Username/Phone No</label>
+              <label className="md:ml-6 ml-8 lg:ml-8">
+                {t("username_phone")}
+              </label>
               <input
                 type="text"
                 className="w-[80%] h-10 divsize md:ml-6 ml-8 lg:ml-8 rounded-md p-4 focus:outline-blue-600"
-                placeholder="Username/Phone No"
+                placeholder={t("username_phone")}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
               />
             </div>
             <div className="w-full flex flex-col">
-              <label className="ml-8">Password</label>
+              <label className="ml-8">{t("password")}</label>
               <div className="w-[full] flex flex-col justify-center items-center">
                 <input
                   type="password"
@@ -132,7 +173,7 @@ const Login = ({ setIsLoggedIn }) => {
                 className="ml-8 text-blue-600 cursor-pointer"
                 to="/Forgetpassword"
               >
-                Forgot Password?
+                {t("forgot_password")}
               </Link>
             </div>
             <div className="w-full flex justify-center">
@@ -140,19 +181,19 @@ const Login = ({ setIsLoggedIn }) => {
                 className="w-[80%] h-10 bg-blue-600 rounded-md text-white"
                 type="submit"
               >
-                Login
+                {t("login")}
               </button>
             </div>
             <div className="w-full flex justify-center gap-2 mt-6">
-              <p>Not registered yet?</p>
+              <p>{t("not_registered_yet")}</p>
               <Link className="text-blue-600 cursor-pointer" to="/Register">
-                Register Now
+                {t("register_now")}
               </Link>
             </div>
           </form>
         </div>
         <div className="w-full flex mt-10">
-          <p className="ml-[150px]">Register Agreement</p>
+          <p className="ml-[150px]">{t("register_agreement")}</p>
         </div>
         <div className="w-full flex flex-col lg:flex-row justify-center lg:justify-start md:flex-row gap-5 items-center">
           <img

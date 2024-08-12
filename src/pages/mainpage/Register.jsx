@@ -10,7 +10,9 @@ import { Link, useNavigate } from "react-router-dom";
 import PhoneInput from "react-phone-number-input";
 import "react-phone-number-input/style.css";
 import validator from "validator";
+import { useTranslation } from "react-i18next";
 const Register = () => {
+  const { t, i18n } = useTranslation();
   const [username, setUserName] = useState("");
   const [phonenumber, setPhonenumber] = useState("");
   const [password, setPassword] = useState("");
@@ -21,6 +23,7 @@ const Register = () => {
   const [passwordVisible, setPasswordVisible] = useState(false);
   const [withdrawalPasswordVisible, setWithdrawalPasswordVisible] =
     useState(false);
+  const [showOptions, setShowOptions] = useState(false);
   const [invitationCodeVisible, setInvitationCodeVisible] = useState(false);
   const navigate = useNavigate();
   const phonevalid = /^\+(?:[0-9] ?){6,14}[0-9]$/;
@@ -87,7 +90,7 @@ const Register = () => {
         }
       );
       // Handle success (e.g., redirect or show success message)
-      setSuccess("Registered successfully");
+      t("registration_success");
       setTimeout(() => setSuccess(""), 5000);
 
       // Clear input fields
@@ -110,10 +113,47 @@ const Register = () => {
     }
   };
 
+  const handleLanguageChange = (language) => {
+    i18n.changeLanguage(language);
+    setShowOptions(false); // Close the dropdown after selection
+  };
   return (
     <main>
       <div className="w-full h-full flex flex-col items-center absolute">
-        <div className="w-full flex justify-center flex-col items-center absolute">
+        <div className="w-full flex justify-end absolute z-50 mt-5 -ml-5">
+          <div className="flex items-center gap-1">
+            <FontAwesomeIcon icon={faPhoneVolume} className="text-xl" />
+            <button
+              onClick={() => setShowOptions(!showOptions)}
+              className="text-black hover:text-blue-600 hover:underline focus:outline-none font-bold"
+            >
+              {t("language")}
+            </button>
+            {showOptions && (
+              <ul className="absolute mt-10 bg-white border rounded shadow-lg ">
+                <li
+                  onClick={() => handleLanguageChange("en")}
+                  className="cursor-pointer p-2 hover:bg-blue-100"
+                >
+                  English
+                </li>
+                <li
+                  onClick={() => handleLanguageChange("es")}
+                  className="cursor-pointer p-2 hover:bg-blue-100"
+                >
+                  Español
+                </li>
+                <li
+                  onClick={() => handleLanguageChange("de")}
+                  className="cursor-pointer p-2 hover:bg-blue-100"
+                >
+                  Deutsch
+                </li>
+              </ul>
+            )}
+          </div>
+        </div>
+        <div className="w-full flex justify-center flex-col items-center absolute mt-5">
           <div className="w-full h-12 flex justify-center">
             <img
               src={`${process.env.PUBLIC_URL}/logo.png`}
@@ -134,7 +174,9 @@ const Register = () => {
 
         <div className="w-[80%] md:w-[40%] lg:w-[30%] h-[100%] divsize rounded-md mt-48 ">
           <div className="w-full flex justify-center">
-            <p className="text-4xl text-blue-600 font-bold mt-6">Register</p>
+            <h1 className="text-4xl text-blue-600 font-bold mt-6">
+              {t("register")}
+            </h1>
           </div>
           <form
             className="w-full flex flex-col items-center mt-6 gap-3"
@@ -143,18 +185,18 @@ const Register = () => {
             {error && <p className="text-red-600">{error}</p>}
             {success && <p className="text-green-500">{success}</p>}
             <div className="w-full flex flex-col">
-              <label className="md:ml-6 ml-8 lg:ml-8">Username</label>
+              <label className="md:ml-6 ml-8 lg:ml-8">{t("Username")}</label>
               <input
                 type="text"
                 className="w-[80%] h-10 divsize md:ml-6 ml-8 lg:ml-8 rounded-md p-4 focus:outline-blue-600"
-                placeholder="Username"
+                placeholder={t("Username")}
                 value={username}
                 onChange={(e) => setUserName(e.target.value)}
               />
             </div>
 
             <div className="w-full flex flex-col">
-              <label className="ml-8">Phone Number</label>
+              <label className="ml-8">{t("phone_number")}</label>
               <PhoneInput
                 className="w-[80%] h-10 divsize ml-8 rounded-md p-4 focus:outline-blue-600"
                 international
@@ -167,12 +209,12 @@ const Register = () => {
             </div>
 
             <div className="w-full flex flex-col">
-              <label className="ml-8">Password</label>
+              <label className="ml-8">{t("password")}</label>
               <div className="w-full flex flex-col justify-center items-center">
                 <input
                   type={passwordVisible ? "text" : "password"}
                   className="w-[80%] h-10 divsize -ml-4 rounded-md p-4 focus:outline-blue-600"
-                  placeholder="Password"
+                  placeholder={t("password")}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
@@ -187,12 +229,12 @@ const Register = () => {
             </div>
 
             <div className="w-full flex flex-col">
-              <label className="ml-8">Withdrawal Password</label>
+              <label className="ml-8">{t("withdrawal_password")}</label>
               <div className="w-full flex flex-col justify-center items-center">
                 <input
                   type={withdrawalPasswordVisible ? "text" : "password"}
                   className="w-[80%] h-10 divsize -ml-4 rounded-md p-4 focus:outline-blue-600"
-                  placeholder="Withdrawal Password"
+                  placeholder={t("withdrawal_password")}
                   value={withdrawalPassword}
                   onChange={(e) => setWithdrawalPassword(e.target.value)}
                 />
@@ -207,11 +249,11 @@ const Register = () => {
             </div>
 
             <div className="w-full flex flex-col">
-              <label className="ml-8">Invitation Code</label>
+              <label className="ml-8">{t("invitation_code")}</label>
               <input
                 type="text"
                 className="w-[80%] h-10 divsize ml-8 rounded-md p-4 focus:outline-blue-600"
-                placeholder="Invitation Code"
+                placeholder={t("invitation_code")}
                 value={invitationCode}
                 onChange={(e) => setInvitationCode(e.target.value)}
               />
@@ -219,7 +261,7 @@ const Register = () => {
 
             <div className="w-full flex gap-2 mt-6">
               <input type="checkbox" className="ml-8" required />
-              <p className="cursor-pointer">Register Agreement</p>
+              <p className="cursor-pointer">{t("Register Agreement")}</p>
             </div>
 
             <div className="w-full flex justify-center">
@@ -227,7 +269,7 @@ const Register = () => {
                 type="submit"
                 className="w-[80%] h-10 bg-blue-600 rounded-md text-white"
               >
-                Register
+                {t("register")}
               </button>
             </div>
 
@@ -236,7 +278,7 @@ const Register = () => {
                 className="w-[80%] h-10 flex justify-center items-center text-blue-600 hover:underline"
                 to="/login"
               >
-                Have an Account? Log In
+                {t("Have an Account? Log In")}
               </Link>
             </div>
           </form>

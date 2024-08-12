@@ -6,7 +6,9 @@ import {
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
+import { useTranslation } from "react-i18next";
 const Footer = () => {
+  const { t } = useTranslation();
   return (
     <>
       <footer>
@@ -17,7 +19,7 @@ const Footer = () => {
                 icon={faHouseChimney}
                 className="text-1xl md:text-4xl lg:text-5xl navcolor"
               />
-              <p>Home</p>
+              <p>{t("home")}</p>
             </div>
           </Link>
           <Link to="/products" class="  font-bold text-white">
@@ -26,7 +28,7 @@ const Footer = () => {
                 icon={faBackwardFast}
                 className="text-1xl md:text-4xl lg:text-5xl navcolor"
               />
-              <p>Starting</p>
+              <p>{t("starting")}</p>
             </div>
           </Link>
           <Link to="/Profile" class="  font-bold text-white">
@@ -35,7 +37,7 @@ const Footer = () => {
                 icon={faUser}
                 className="text-1xl md:text-4xl lg:text-5xl navcolor"
               />
-              <p>Profile</p>
+              <p>{t("profile")}</p>
             </div>
           </Link>
         </div>
