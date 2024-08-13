@@ -29,7 +29,7 @@ const BindWallet = () => {
       console.log(token);
       // Make the POST request to bind the wallet with JWT in headers
       const response = await axios.post(
-        "http://localhost:5000/api/user/bind-wallet",
+        "https://backend-uhub.onrender.com/api/user/bind-wallet",
         {
           userId,
           walletName,

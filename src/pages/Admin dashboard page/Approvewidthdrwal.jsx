@@ -14,7 +14,7 @@ const Approvewidthdrwal = () => {
     const fetchTransactions = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/admin/users-with-transactions", // Replace with your endpoint
+          "https://backend-uhub.onrender.com/api/admin/users-with-transactions", // Replace with your endpoint
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -38,7 +38,7 @@ const Approvewidthdrwal = () => {
     console.log(selectedTransactionId);
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/admin/approve-withdrawal`,
+        `https://backend-uhub.onrender.com/api/admin/approve-withdrawal`,
         {
           withdrawalId: selectedTransactionId,
         },
@@ -62,7 +62,7 @@ const Approvewidthdrwal = () => {
   const handleReject = async () => {
     try {
       const response = await axios.post(
-        `http://localhost:5000/api/admin/reject-withdrawal`,
+        `https://backend-uhub.onrender.com/api/admin/reject-withdrawal`,
         {
           withdrawalId: selectedTransactionId,
         },

@@ -12,7 +12,7 @@ const Event = () => {
     const fetchEvents = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/user/events",
+          "https://backend-uhub.onrender.com/api/user/events",
           {
             headers: {
               Authorization: `Bearer ${token}`,

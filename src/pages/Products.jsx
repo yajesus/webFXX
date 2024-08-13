@@ -8,6 +8,7 @@ const Products = () => {
   const [success, setSuccess] = useState("");
   const [progress, setProgress] = useState(0);
   const { t } = useTranslation();
+  const apiUrl = process.env.REACT_APP_API_URL;
   useEffect(() => {
     const fetchProducts = async () => {
       try {
@@ -15,7 +16,7 @@ const Products = () => {
         const submittedProductIds =
           JSON.parse(localStorage.getItem("submittedProductIds")) || [];
 
-        const response = await axios.get("http://localhost:5000/api/products", {
+        const response = await axios.get(`${apiUrl}/api/products`, {
           headers: { Authorization: `Bearer ${token}` },
         });
 
@@ -44,7 +45,7 @@ const Products = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/user/submit-task",
+        `${apiUrl}/api/user/submit-task`,
         {
           userId: userId,
           productId: currentProduct._id,

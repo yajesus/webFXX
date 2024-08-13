@@ -32,7 +32,7 @@ const Approveuserproduct = () => {
   const handleApprove = async (productId) => {
     try {
       await axios.post(
-        "http://localhost:5000/api/admin/approve-user",
+        "https://backend-uhub.onrender.com/api/admin/approve-user",
         { userId, productId }, // Pass the productId to the backend
         {
           headers: { Authorization: `Bearer ${token}` },

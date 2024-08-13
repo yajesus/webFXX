@@ -19,7 +19,7 @@ const Withdrawal = () => {
       try {
         // Fetch the latest withdrawal status
         const response = await axios.get(
-          `http://localhost:5000/api/user/withdrawal/status/${response.data.withdrawalId}`,
+          `https://backend-uhub.onrender.com/api/user/withdrawal/status/${response.data.withdrawalId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
@@ -45,7 +45,7 @@ const Withdrawal = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/user/request-withdrawal",
+        "https://backend-uhub.onrender.com/api/user/request-withdrawal",
         {
           userId: userId,
           amount: amount,
@@ -69,7 +69,7 @@ const Withdrawal = () => {
       const intervalId = setInterval(async () => {
         try {
           const statusResponse = await axios.get(
-            `http://localhost:5000/api/user/withdrawal/status/${response.data.withdrawalId}`,
+            `https://backend-uhub.onrender.com/api/user/withdrawal/status/${response.data.withdrawalId}`,
             {
               headers: { Authorization: `Bearer ${token}` },
             }

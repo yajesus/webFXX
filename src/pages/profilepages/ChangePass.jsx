@@ -42,8 +42,8 @@ const ChangePass = () => {
     try {
       // Set the correct endpoint based on whether it's login or withdrawal password
       const endpoint = show
-        ? "http://localhost:5000/api/user/update-password" // Login password endpoint
-        : "http://localhost:5000/api/user/update-withdrawal-password"; // Withdrawal password endpoint
+        ? "https://backend-uhub.onrender.com/api/user/update-password" // Login password endpoint
+        : "https://backend-uhub.onrender.com/api/user/update-withdrawal-password"; // Withdrawal password endpoint
 
       // Set the correct payload based on the type of password being changed
       const payload = show

@@ -12,7 +12,7 @@ const Transaction = () => {
         const token = localStorage.getItem("token");
         const userId = localStorage.getItem("userId");
         const response = await axios.get(
-          `http://localhost:5000/api/user/transaction-history/${userId}`,
+          `https://backend-uhub.onrender.com/api/user/transaction-history/${userId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }

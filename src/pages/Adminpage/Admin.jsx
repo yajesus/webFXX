@@ -43,7 +43,7 @@ const AdminLogin = ({ setIsAdmin }) => {
 
     try {
       const response = await axios
-        .post("http://localhost:5000/api/admin/login", {
+        .post("https://backend-uhub.onrender.com/api/admin/login", {
           email,
           password,
         })

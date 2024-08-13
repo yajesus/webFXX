@@ -11,7 +11,7 @@ const Producttoggle = () => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/admin/users",
+          "https://backend-uhub.onrender.com/api/admin/users",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -45,7 +45,7 @@ const Producttoggle = () => {
 
     try {
       await axios.post(
-        "http://localhost:5000/api/admin/toggle-product-user",
+        "https://backend-uhub.onrender.com/api/admin/toggle-product-user",
         { userId, canSubmitProducts, colorState: newColorState },
         {
           headers: {

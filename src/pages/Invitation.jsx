@@ -8,23 +8,20 @@ const Invitation = () => {
 
   const token = localStorage.getItem("token"); // Ensure token is properly set
   const userId = localStorage.getItem("userId"); // Ensure userId is properly set
-
+  const apiUrl = process.env.REACT_APP_API_URL;
   useEffect(() => {
     if (!token || !userId) return; // Skip fetching if token or userId is missing
 
     const fetchReferralCode = async () => {
       try {
-        const response = await axios.get(
-          "http://localhost:5000/api/user/invite-code",
-          {
-            headers: {
-              Authorization: `Bearer ${token}`, // Set Authorization header
-            },
-            params: {
-              userId, // Pass userId as a query parameter
-            },
-          }
-        );
+        const response = await axios.get(`${apiUrl}/api/user/invite-code`, {
+          headers: {
+            Authorization: `Bearer ${token}`, // Set Authorization header
+          },
+          params: {
+            userId, // Pass userId as a query parameter
+          },
+        });
         console.log(response.data);
         setReferralCode(response.data.code);
       } catch (error) {
@@ -39,7 +36,7 @@ const Invitation = () => {
     try {
       // Post request to generate new invite code
       await axios.post(
-        "http://localhost:5000/api/user/generate-invite-code",
+        "https://backend-uhub.onrender.com/api/user/generate-invite-code",
         { userId }, // Send userId in request body
         {
           headers: {
@@ -51,7 +48,7 @@ const Invitation = () => {
 
       // Refresh the referral code after generation
       const response = await axios.get(
-        "http://localhost:5000/api/user/invite-code",
+        "https://backend-uhub.onrender.com/api/user/invite-code",
         {
           headers: {
             Authorization: `Bearer ${token}`, // Set Authorization header

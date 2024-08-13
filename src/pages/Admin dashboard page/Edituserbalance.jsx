@@ -12,11 +12,14 @@ const Edituserbalance = ({ token }) => {
     // Fetch users when component mounts
     const fetchUsers = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/users", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        const response = await axios.get(
+          "https://backend-uhub.onrender.com/users",
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        );
         setUsers(response.data);
       } catch (error) {
         console.error("Error fetching users:", error);
@@ -41,7 +44,7 @@ const Edituserbalance = ({ token }) => {
     const adminToken = localStorage.getItem("adminToken");
     try {
       await axios.put(
-        "http://localhost:5000/api/admin/edit-user-balance",
+        "https://backend-uhub.onrender.com/api/admin/edit-user-balance",
         {
           userId: selectedUser,
           amount: parseFloat(amount),
@@ -54,7 +57,7 @@ const Edituserbalance = ({ token }) => {
       );
       // Post the transaction to the transaction history
       await axios.post(
-        "http://localhost:5000/api/admin/posttransaction",
+        "https://backend-uhub.onrender.com/api/admin/posttransaction",
         {
           userId: selectedUser,
           amount: parseFloat(amount),

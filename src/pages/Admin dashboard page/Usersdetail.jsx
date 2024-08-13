@@ -13,7 +13,7 @@ const Usersdetail = () => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/admin/users",
+          "https://backend-uhub.onrender.com/api/admin/users",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -34,7 +34,7 @@ const Usersdetail = () => {
   const fetchInvitedUsers = async (userId) => {
     try {
       const response = await axios.get(
-        "http://localhost:5000/api/user/users-invited-by",
+        "https://backend-uhub.onrender.com/api/user/users-invited-by",
         {
           headers: {
             Authorization: `Bearer ${token}`,

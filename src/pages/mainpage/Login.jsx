@@ -18,6 +18,7 @@ const Login = ({ setIsLoggedIn }) => {
   const [showOptions, setShowOptions] = useState(false);
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
+  const apiUrl = process.env.REACT_APP_API_URL;
   const handleLogin = async (e) => {
     e.preventDefault();
 
@@ -31,7 +32,7 @@ const Login = ({ setIsLoggedIn }) => {
     try {
       // API call for login
       const response = await axios.post(
-        "http://localhost:5000/api/auth/login",
+        `https://backend-uhub.onrender.com/api/auth/login`,
         {
           identifier: username,
           password: password,

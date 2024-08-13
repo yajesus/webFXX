@@ -13,7 +13,7 @@ const GenerateInviteCode = () => {
       setLoading(true);
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/admin/invite-codes",
+          "https://backend-uhub.onrender.com/api/admin/invite-codes",
           {
             headers: {
               Authorization: `Bearer ${localStorage.getItem("adminToken")}`,
@@ -36,7 +36,7 @@ const GenerateInviteCode = () => {
     setLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/admin/generate-invite-code",
+        "https://backend-uhub.onrender.com/api/admin/generate-invite-code",
         {},
         {
           headers: {

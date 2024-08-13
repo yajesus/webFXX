@@ -25,7 +25,7 @@ const AddEvent = () => {
     try {
       // Send title and content
       const response = await axios.post(
-        "http://localhost:5000/api/admin/add-event",
+        "https://backend-uhub.onrender.com/api/admin/add-event",
         { title, content },
         {
           headers: {

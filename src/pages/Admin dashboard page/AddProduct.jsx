@@ -19,7 +19,7 @@ const AddProduct = () => {
     const fetchUsers = async () => {
       try {
         const response = await axios
-          .get("http://localhost:5000/users")
+          .get("https://backend-uhub.onrender.com/users")
           .then((response) => setAllUsers(response.data));
       } catch (err) {
         console.error("Error fetching users:", err);
@@ -56,7 +56,7 @@ const AddProduct = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/admin/add-product",
+        "https://backend-uhub.onrender.com/api/admin/add-product",
         formData,
         {
           headers: {

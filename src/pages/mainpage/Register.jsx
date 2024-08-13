@@ -27,6 +27,7 @@ const Register = () => {
   const [invitationCodeVisible, setInvitationCodeVisible] = useState(false);
   const navigate = useNavigate();
   const phonevalid = /^\+(?:[0-9] ?){6,14}[0-9]$/;
+  const apiUrl = process.env.REACT_APP_API_URL;
   const handleVisibilityToggle = (type) => {
     if (type === "password") {
       setPasswordVisible(!passwordVisible);
@@ -80,7 +81,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/auth/register",
+        `https://backend-uhub.onrender.com/api/auth/register`,
         {
           username: username,
           phoneNumber: phonenumber,

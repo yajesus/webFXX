@@ -17,7 +17,7 @@ const Header = () => {
     const fetchNotifications = async () => {
       try {
         const response = await axios.get(
-          `http://localhost:5000/api/user/Notification`,
+          `https://backend-uhub.onrender.com/api/user/Notification`,
           {
             params: { userId }, // Pass userId as query parameter
             headers: {
