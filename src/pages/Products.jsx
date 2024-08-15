@@ -1,30 +1,46 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
+
 const Products = () => {
   const [products, setProducts] = useState([]);
   const [currentProductIndex, setCurrentProductIndex] = useState(null); // Start as null to show logo initially
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [progress, setProgress] = useState(0);
+  const [totalProducts, setTotalProducts] = useState(0);
+  const [remainingProducts, setRemainingProducts] = useState(0);
+  const [isProductPendingApproval, setIsProductPendingApproval] =
+    useState(false);
   const { t } = useTranslation();
   const apiUrl = process.env.REACT_APP_API_URL;
+  const userId = localStorage.getItem("userId");
+
   useEffect(() => {
     const fetchProducts = async () => {
       try {
         const token = localStorage.getItem("token");
-        const submittedProductIds =
-          JSON.parse(localStorage.getItem("submittedProductIds")) || [];
 
-        const response = await axios.get(`${apiUrl}/api/products`, {
-          headers: { Authorization: `Bearer ${token}` },
-        });
-
-        // Filter out already submitted products
-        const filteredProducts = response.data.filter(
-          (product) => !submittedProductIds.includes(product._id)
+        // Fetch all available products
+        const response = await axios.get(
+          `https://backend-uhub.onrender.com/api/user/usersproducts?userId=${userId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
         );
-        setProducts(filteredProducts);
+
+        const allProducts = response.data;
+        setTotalProducts(allProducts.length); // Set total products
+
+        // Load remaining products from localStorage or set to total initially
+        const storedRemainingProducts =
+          localStorage.getItem("remainingProducts");
+        const initialCount = storedRemainingProducts
+          ? parseInt(storedRemainingProducts)
+          : allProducts.length;
+        setRemainingProducts(initialCount);
+
+        // Set products to display
+        setProducts(allProducts);
       } catch (err) {
         setError("Error fetching products");
         console.error(err);
@@ -32,7 +48,7 @@ const Products = () => {
     };
 
     fetchProducts();
-  }, []);
+  }, [userId]);
 
   const handleStartNow = () => {
     setCurrentProductIndex(0); // Start showing products
@@ -41,43 +57,72 @@ const Products = () => {
   const handleBoost = async () => {
     const token = localStorage.getItem("token");
     const currentProduct = products[currentProductIndex];
-    const userId = localStorage.getItem("userId");
+
+    if (remainingProducts <= 0) {
+      setError("No remaining products to submit.");
+      setSuccess("");
+      return;
+    }
 
     try {
+      // Check if the current product is premium
+      const isPremium = currentProduct.isPremium;
+      const approved = currentProduct.isApproved;
+
+      if (isPremium && !approved) {
+        // Product is premium and not approved yet, stay on this product
+        setIsProductPendingApproval(true);
+        setSuccess("Product submission is pending admin approval.");
+        setError("");
+        return;
+      } else {
+        setIsProductPendingApproval(false);
+      }
+
       const response = await axios.post(
-        `${apiUrl}/api/user/submit-task`,
+        `https://backend-uhub.onrender.com/api/user/submit-task`,
         {
-          userId: userId,
           productId: currentProduct._id,
+          userId,
         },
         {
           headers: { Authorization: `Bearer ${token}` },
         }
       );
 
-      if (
-        response.data.message ===
-        "Product submission is pending admin approval."
-      ) {
-        setSuccess("Product is pending admin approval");
-      } else {
-        setSuccess("Balance updated successfully");
-      }
-      setError("");
+      const { message } = response.data;
+
+      setSuccess(message || "Balance updated successfully");
+
+      // Update remainingProducts and move to the next product only if it’s not pending approval
+      setRemainingProducts((prev) => {
+        const newRemaining = Math.max(prev - 1, 0);
+        localStorage.setItem("remainingProducts", newRemaining);
+        return newRemaining;
+      });
+
+      // Move to the next product only if it’s not pending approval
+      setCurrentProductIndex((prev) => {
+        const nextIndex = prev + 1;
+        return nextIndex < products.length ? nextIndex : null; // Set to null if no more products
+      });
+
       setTimeout(() => setSuccess(""), 3000);
 
-      // Update local storage to remember the submitted product
-      const submittedProductIds =
-        JSON.parse(localStorage.getItem("submittedProductIds")) || [];
-      submittedProductIds.push(currentProduct._id);
-      localStorage.setItem(
-        "submittedProductIds",
-        JSON.stringify(submittedProductIds)
-      );
+      // Calculate the profit to be added
+      const profit = currentProduct.profit;
 
-      // Move to the next product
-      setCurrentProductIndex((prevIndex) => prevIndex + 1);
-      setProgress((prevProgress) => prevProgress + 1);
+      // Update the user's total amount
+      await axios.post(
+        `https://backend-uhub.onrender.com/api/user/updateamount`,
+        {
+          userId,
+          profit,
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
     } catch (err) {
       let errorMessage = "An error occurred";
       if (err.response) {
@@ -90,7 +135,6 @@ const Products = () => {
         errorMessage = err.message;
       }
       setError(errorMessage);
-
       setSuccess("");
       setTimeout(() => setError(""), 3000);
       console.error(err);
@@ -113,7 +157,7 @@ const Products = () => {
             onClick={handleStartNow}
             className="w-[60%] h-20 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 mt-4 text-3xl font-bold"
           >
-            {t("start_now")} ({progress}/{products.length})
+            {t("start_now")} ({remainingProducts}/{totalProducts})
           </button>
         </>
       ) : (
@@ -149,13 +193,10 @@ const Products = () => {
               <p className="text-sm">
                 Profit: ${products[currentProductIndex].profit}
               </p>
-              <p className="text-sm">
-                Premium:{" "}
-                {products[currentProductIndex].isPremium ? "Yes" : "No"}
-              </p>
               <button
                 onClick={handleBoost}
                 className="w-full mt-4 px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 text-2xl font-bold"
+                disabled={isProductPendingApproval}
               >
                 Boost
               </button>

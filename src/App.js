@@ -32,6 +32,7 @@ import Forgetpassword from "./pages/mainpage/Forgetpassword";
 import Newpassword from "./pages/mainpage/Newpassword";
 import Usersdetail from "./pages/Admin dashboard page/Usersdetail";
 import Producttoggle from "./pages/Admin dashboard page/Producttoggle";
+import Allproducts from "./pages/Admin dashboard page/Allproducts";
 const ForgetpasswordWrapper = ({ setIsForgetpassword }) => (
   <Forgetpassword setIsForgetpassword={setIsForgetpassword} />
 );
@@ -67,6 +68,10 @@ const App = () => {
         <Route
           path="/admin/dashboard/addproduct"
           element={isAdmin ? <AddProduct /> : <Navigate to="/admin/login" />}
+        />
+        <Route
+          path="/admin/dashboard/Allproducts"
+          element={isAdmin ? <Allproducts /> : <Navigate to="/admin/login" />}
         />
         <Route
           path="/admin/dashboard/edituserbalance"

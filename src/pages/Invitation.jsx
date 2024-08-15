@@ -34,18 +34,6 @@ const Invitation = () => {
 
   const handleGenerateCode = async () => {
     try {
-      // Post request to generate new invite code
-      await axios.post(
-        "https://backend-uhub.onrender.com/api/user/generate-invite-code",
-        { userId }, // Send userId in request body
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Set Authorization header
-          },
-        }
-      );
-      setGenerateStatus("Invite code generated!");
-
       // Refresh the referral code after generation
       const response = await axios.get(
         "https://backend-uhub.onrender.com/api/user/invite-code",
@@ -96,12 +84,7 @@ const Invitation = () => {
           >
             {copyStatus}
           </button>
-          <button
-            className="w-[300px] h-14 bg-blue-700 rounded-xl text-white mt-4"
-            onClick={handleGenerateCode}
-          >
-            Generate Invite Code
-          </button>
+
           {generateStatus && (
             <p className="mt-2 text-green-500">{generateStatus}</p>
           )}

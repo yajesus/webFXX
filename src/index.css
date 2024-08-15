@@ -20,6 +20,10 @@ code {
   color: #6A5ACD;
 }
 
+.white {
+  color: white
+}
+
 .divsize {
   border: 2px solid lightgray;
 }
