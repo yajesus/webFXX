@@ -18,6 +18,7 @@ const Profile = () => {
   const [totalAmount, setTotalAmount] = useState(0);
   const [todaysCommission, setTodaysCommission] = useState(0);
   const [username, setUsername] = useState("");
+  const [referralCode, setReferralCode] = useState(0);
   const navigate = useNavigate();
   const { t } = useTranslation();
   const token = localStorage.getItem("token");
@@ -33,6 +34,29 @@ const Profile = () => {
   };
 
   useEffect(() => {
+    const fetchReferralCode = async () => {
+      try {
+        const response = await axios.get(
+          `https://backend-uhub.onrender.com/api/user/invite-code`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            params: {
+              userId: userId, // Send userId as a query parameter
+            },
+          }
+        );
+        console.log(response.data);
+        setReferralCode(response.data.inviteCode);
+      } catch (error) {
+        console.error(
+          "Error fetching referral code:",
+          error.response ? error.response.data : error.message
+        );
+      }
+    };
+
     // Fetch total amount and today's commission
     const fetchUsername = async () => {
       try {
@@ -69,6 +93,7 @@ const Profile = () => {
     };
 
     // Call the function
+    fetchReferralCode();
     fetchFinances();
     fetchUsername();
   }, [userId, token]);
@@ -89,7 +114,9 @@ const Profile = () => {
           </div>
           <div className="w-[95%] flex flex-col mt-5 gap-3">
             <div className="w-full h-[1px] z-50 bg-white"></div>
-            <p className="text-white font-thin">Referral Code:</p>
+            <p className="text-white font-thin">
+              Referral Code: {referralCode}
+            </p>
           </div>
           <div className="w-full flex justify-between">
             <div className="flex flex-col items-center bottom-0 mt-8">

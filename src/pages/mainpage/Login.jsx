@@ -196,7 +196,7 @@ const Login = ({ setIsLoggedIn }) => {
         <div className="w-full flex mt-10">
           <p className="ml-[150px]">{t("register_agreement")}</p>
         </div>
-        <div className="w-full flex flex-col lg:flex-row justify-center lg:justify-start md:flex-row gap-5 items-center">
+        <div className="w-full flex flex-col lg:flex-row justify-center  md:flex-row gap-5 items-center">
           <img
             src={`${process.env.PUBLIC_URL}/google.jpg`}
             alt="Logo"

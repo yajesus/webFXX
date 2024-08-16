@@ -10,7 +10,7 @@ const AllProducts = () => {
     const fetchProducts = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5000/api/admin/allproducts",
+          "https://backend-uhub.onrender.com/api/admin/allproducts",
           {
             headers: {
               Authorization: `Bearer ${token}`,
@@ -30,7 +30,7 @@ const AllProducts = () => {
   const deleteProduct = async (productId) => {
     try {
       await axios.post(
-        "http://localhost:5000/api/admin/deleteproduct",
+        "https://backend-uhub.onrender.com/api/admin/deleteproduct",
         {
           productId,
         },

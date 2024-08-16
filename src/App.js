@@ -27,7 +27,7 @@ import GenerateInviteCode from "./pages/Admin dashboard page/Generatecode";
 import Transaction from "../src/pages/profilepages/Transaction";
 import Approvewidthdrwal from "./pages/Admin dashboard page/Approvewidthdrwal";
 import Notifications from "./pages/profilepages/Notifications";
-import Approveuserproduct from "./pages/Admin dashboard page/Approveuserproduct";
+import Resetuser from "./pages/Admin dashboard page/Resetuser";
 import Forgetpassword from "./pages/mainpage/Forgetpassword";
 import Newpassword from "./pages/mainpage/Newpassword";
 import Usersdetail from "./pages/Admin dashboard page/Usersdetail";
@@ -56,6 +56,10 @@ const App = () => {
         <Route
           path="/admin/dashboard/Usersdetail"
           element={isAdmin ? <Usersdetail /> : <Navigate to="/admin/login" />}
+        />
+        <Route
+          path="/admin/dashboard/resetuser"
+          element={isAdmin ? <Resetuser /> : <Navigate to="/admin/login" />}
         />
         <Route
           path="/admin/dashboard/producttoggle"
@@ -89,12 +93,6 @@ const App = () => {
           path="/admin/dashboard/Approvewithdrwal"
           element={
             isAdmin ? <Approvewidthdrwal /> : <Navigate to="/admin/login" />
-          }
-        />
-        <Route
-          path="/admin/dashboard/Approveuserproduct"
-          element={
-            isAdmin ? <Approveuserproduct /> : <Navigate to="/admin/login" />
           }
         />
 

@@ -81,7 +81,7 @@ const Register = () => {
 
     try {
       const response = await axios.post(
-        `https://backend-uhub.onrender.com/api/auth/register`,
+        `http://localhost:5000/api/auth/register`,
         {
           username: username,
           phoneNumber: phonenumber,
@@ -284,7 +284,7 @@ const Register = () => {
             </div>
           </form>
         </div>
-        <div className="mt-9 bottom-0 w-full flex flex-col lg:flex-row justify-center lg:justify-start md:flex-row gap-5 items-center">
+        <div className="mt-9 bottom-0 w-full flex flex-col lg:flex-row justify-center  md:flex-row gap-5 items-center">
           <img
             src={`${process.env.PUBLIC_URL}/google.jpg`}
             alt="Logo"

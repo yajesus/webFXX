@@ -4,54 +4,37 @@ import axios from "axios";
 const Invitation = () => {
   const [referralCode, setReferralCode] = useState("");
   const [copyStatus, setCopyStatus] = useState("Copy Referral Code");
-  const [generateStatus, setGenerateStatus] = useState("");
 
   const token = localStorage.getItem("token"); // Ensure token is properly set
   const userId = localStorage.getItem("userId"); // Ensure userId is properly set
-  const apiUrl = process.env.REACT_APP_API_URL;
-  useEffect(() => {
-    if (!token || !userId) return; // Skip fetching if token or userId is missing
 
+  useEffect(() => {
+    console.log(userId);
     const fetchReferralCode = async () => {
       try {
-        const response = await axios.get(`${apiUrl}/api/user/invite-code`, {
-          headers: {
-            Authorization: `Bearer ${token}`, // Set Authorization header
-          },
-          params: {
-            userId, // Pass userId as a query parameter
-          },
-        });
+        const response = await axios.get(
+          `https://backend-uhub.onrender.com/api/user/invite-code`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
+            params: {
+              userId: userId, // Send userId as a query parameter
+            },
+          }
+        );
         console.log(response.data);
-        setReferralCode(response.data.code);
+        setReferralCode(response.data.inviteCode);
       } catch (error) {
-        console.error("Error fetching referral code:", error);
+        console.error(
+          "Error fetching referral code:",
+          error.response ? error.response.data : error.message
+        );
       }
     };
 
     fetchReferralCode();
-  }, [token, userId]);
-
-  const handleGenerateCode = async () => {
-    try {
-      // Refresh the referral code after generation
-      const response = await axios.get(
-        "https://backend-uhub.onrender.com/api/user/invite-code",
-        {
-          headers: {
-            Authorization: `Bearer ${token}`, // Set Authorization header
-          },
-          params: {
-            userId, // Pass userId as a query parameter
-          },
-        }
-      );
-      setReferralCode(response.data.code);
-    } catch (error) {
-      console.error("Error generating invite code:", error);
-      setGenerateStatus("Failed to generate code");
-    }
-  };
+  }, []);
 
   const handleCopy = () => {
     navigator.clipboard
@@ -84,10 +67,6 @@ const Invitation = () => {
           >
             {copyStatus}
           </button>
-
-          {generateStatus && (
-            <p className="mt-2 text-green-500">{generateStatus}</p>
-          )}
         </div>
       </div>
     </main>

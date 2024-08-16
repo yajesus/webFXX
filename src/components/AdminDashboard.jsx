@@ -52,9 +52,9 @@ const AdminDashboard = () => {
           <div className="w-[300px] h-[150px] bg-blue-500 flex items-center justify-center rounded-lg shadow-lg hover:bg-blue-600 transition duration-300">
             <Link
               className="text-white hover:underline font-bold text-2xl"
-              to="/admin/dashboard/Approveuserproduct"
+              to="/admin/dashboard/resetuser"
             >
-              Approve User To Submit Product
+              Reset User
             </Link>
           </div>
           <div className="w-[300px] h-[150px] bg-blue-500 flex items-center justify-center rounded-lg shadow-lg hover:bg-blue-600 transition duration-300">

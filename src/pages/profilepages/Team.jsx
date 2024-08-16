@@ -10,18 +10,16 @@ const Team = () => {
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    if (!token || !userId) return;
-
     const fetchUsers = async () => {
       try {
         const response = await axios.get(
-          "https://backend-uhub.onrender.com/api/user/users-invited-by",
+          "https://backend-uhub.onrender.com/api/user/users-invited-by", // Adjusted endpoint to POST request
           {
             headers: {
               Authorization: `Bearer ${token}`,
             },
             params: {
-              userId,
+              userId: userId, // Send userId as a query parameter
             },
           }
         );
@@ -32,14 +30,14 @@ const Team = () => {
           setUsers([]); // Set an empty array if no users were returned
         }
       } catch (err) {
-        setError(err.message);
+        setError(err.response ? err.response.data.message : err.message);
       } finally {
         setLoading(false);
       }
     };
 
     fetchUsers();
-  }, [token, userId]);
+  }, []);
 
   return (
     <main className="flex flex-col items-center p-6 space-y-6">

@@ -4,10 +4,10 @@ import { useTranslation } from "react-i18next";
 
 const Products = () => {
   const [products, setProducts] = useState([]);
-  const [currentProductIndex, setCurrentProductIndex] = useState(null); // Start as null to show logo initially
+  const [currentProductIndex, setCurrentProductIndex] = useState(null);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
-  const [totalProducts, setTotalProducts] = useState(0);
+  const [totalProducts] = useState(40); // Fixed totalProducts value
   const [remainingProducts, setRemainingProducts] = useState(0);
   const [isProductPendingApproval, setIsProductPendingApproval] =
     useState(false);
@@ -20,7 +20,7 @@ const Products = () => {
       try {
         const token = localStorage.getItem("token");
 
-        // Fetch all available products
+        // Fetch user's products
         const response = await axios.get(
           `https://backend-uhub.onrender.com/api/user/usersproducts?userId=${userId}`,
           {
@@ -29,17 +29,19 @@ const Products = () => {
         );
 
         const allProducts = response.data;
-        setTotalProducts(allProducts.length); // Set total products
+        console.log(allProducts);
 
-        // Load remaining products from localStorage or set to total initially
-        const storedRemainingProducts =
-          localStorage.getItem("remainingProducts");
-        const initialCount = storedRemainingProducts
-          ? parseInt(storedRemainingProducts)
-          : allProducts.length;
-        setRemainingProducts(initialCount);
+        // Fetch remaining products for the specific user
+        const responseRemaining = await axios.get(
+          `https://backend-uhub.onrender.com/api/user/remaningproduct?userId=${userId}`,
+          {
+            headers: { Authorization: `Bearer ${token}` },
+          }
+        );
 
-        // Set products to display
+        const remainingCount = responseRemaining.data.remainingProducts;
+
+        setRemainingProducts(remainingCount);
         setProducts(allProducts);
       } catch (err) {
         setError("Error fetching products");
@@ -65,14 +67,14 @@ const Products = () => {
     }
 
     try {
-      // Check if the current product is premium
       const isPremium = currentProduct.isPremium;
       const approved = currentProduct.isApproved;
 
       if (isPremium && !approved) {
-        // Product is premium and not approved yet, stay on this product
         setIsProductPendingApproval(true);
-        setSuccess("Product submission is pending admin approval.");
+        setSuccess(
+          "Congratulations, you have encountered a premium product. Contact customer service."
+        );
         setError("");
         return;
       } else {
@@ -90,29 +92,35 @@ const Products = () => {
         }
       );
 
-      const { message } = response.data;
-
+      const { message, remainingProducts } = response.data;
       setSuccess(message || "Balance updated successfully");
 
-      // Update remainingProducts and move to the next product only if it’s not pending approval
-      setRemainingProducts((prev) => {
-        const newRemaining = Math.max(prev - 1, 0);
-        localStorage.setItem("remainingProducts", newRemaining);
-        return newRemaining;
-      });
+      // Update remainingProducts based on the API response
+      setRemainingProducts(remainingProducts);
+      localStorage.setItem("remainingProducts", remainingProducts);
+
+      // Save the updated remaining count for the user
+      await axios.post(
+        `https://backend-uhub.onrender.com/api/user/updateremainingproduct`,
+        {
+          userId,
+          remainingProducts: Math.max(remainingProducts - 1, 0),
+        },
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        }
+      );
 
       // Move to the next product only if it’s not pending approval
       setCurrentProductIndex((prev) => {
         const nextIndex = prev + 1;
-        return nextIndex < products.length ? nextIndex : null; // Set to null if no more products
+        return nextIndex < products.length ? nextIndex : null;
       });
 
       setTimeout(() => setSuccess(""), 3000);
 
-      // Calculate the profit to be added
-      const profit = currentProduct.profit;
-
       // Update the user's total amount
+      const profit = currentProduct.profit;
       await axios.post(
         `https://backend-uhub.onrender.com/api/user/updateamount`,
         {

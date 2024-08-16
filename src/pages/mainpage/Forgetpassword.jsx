@@ -22,7 +22,7 @@ const Forgetpassword = ({ isForgetpassword, setIsForgetpassword }) => {
     try {
       // API call for password reset verification
       const response = await axios.post(
-        "http://localhost:5000/api/user/forgot-password",
+        "https://backend-uhub.onrender.com/api/user/forgot-password",
         {
           username,
           invitationCode,
