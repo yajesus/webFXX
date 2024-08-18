@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useTranslation } from "react-i18next";
+import Traningproducts from "../components/Traningproducts"; // Import the training component
 
 const Products = () => {
   const [products, setProducts] = useState([]);
@@ -11,46 +12,75 @@ const Products = () => {
   const [remainingProducts, setRemainingProducts] = useState(0);
   const [isProductPendingApproval, setIsProductPendingApproval] =
     useState(false);
+  const [canSubmitProducts, setCanSubmitProducts] = useState(false);
+  const [isTrainingComplete, setIsTrainingComplete] = useState(false);
+  const [isApproved, setIsApproved] = useState(false);
   const { t } = useTranslation();
   const apiUrl = process.env.REACT_APP_API_URL;
   const userId = localStorage.getItem("userId");
 
   useEffect(() => {
-    const fetchProducts = async () => {
+    const fetchApprovalStatus = async () => {
       try {
         const token = localStorage.getItem("token");
-
-        // Fetch user's products
         const response = await axios.get(
-          `https://backend-uhub.onrender.com/api/user/usersproducts?userId=${userId}`,
+          `https://backend-uhub.onrender.com/api/user/get-approval-status?userId=${userId}`,
           {
             headers: { Authorization: `Bearer ${token}` },
           }
         );
-
-        const allProducts = response.data;
-        console.log(allProducts);
-
-        // Fetch remaining products for the specific user
-        const responseRemaining = await axios.get(
-          `https://backend-uhub.onrender.com/api/user/remaningproduct?userId=${userId}`,
-          {
-            headers: { Authorization: `Bearer ${token}` },
-          }
-        );
-
-        const remainingCount = responseRemaining.data.remainingProducts;
-
-        setRemainingProducts(remainingCount);
-        setProducts(allProducts);
+        const { canSubmitProducts, isTrainingComplete, isApproved } =
+          response.data;
+        setCanSubmitProducts(canSubmitProducts);
+        setIsTrainingComplete(isTrainingComplete);
+        setIsApproved(isApproved);
       } catch (err) {
-        setError("Error fetching products");
+        setError("Error fetching approval status");
         console.error(err);
       }
     };
 
-    fetchProducts();
+    fetchApprovalStatus();
   }, [userId]);
+
+  // Fetch products if the user is approved and training is complete
+  useEffect(() => {
+    if (canSubmitProducts && isTrainingComplete && isApproved) {
+      const fetchProducts = async () => {
+        try {
+          const token = localStorage.getItem("token");
+
+          // Fetch user's products
+          const response = await axios.get(
+            `https://backend-uhub.onrender.com/api/user/usersproducts?userId=${userId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+
+          const allProducts = response.data;
+
+          // Fetch remaining products for the specific user
+          const responseRemaining = await axios.get(
+            `https://backend-uhub.onrender.com/api/user/remaningproduct?userId=${userId}`,
+            {
+              headers: { Authorization: `Bearer ${token}` },
+            }
+          );
+
+          const remainingCount = responseRemaining.data.remainingProducts;
+
+          setRemainingProducts(remainingCount);
+          setProducts(allProducts);
+        } catch (err) {
+          setError("Error fetching products");
+          console.error(err);
+        }
+      };
+
+      fetchProducts();
+    }
+  }, [userId, canSubmitProducts, isTrainingComplete, isApproved]);
 
   const handleStartNow = () => {
     setCurrentProductIndex(0); // Start showing products
@@ -67,6 +97,7 @@ const Products = () => {
     }
 
     try {
+      console.log("Current Product:", currentProduct);
       const isPremium = currentProduct.isPremium;
       const approved = currentProduct.isApproved;
 
@@ -86,6 +117,7 @@ const Products = () => {
         {
           productId: currentProduct._id,
           userId,
+          productType: "user",
         },
         {
           headers: { Authorization: `Bearer ${token}` },
@@ -148,6 +180,11 @@ const Products = () => {
       console.error(err);
     }
   };
+
+  // Conditionally render either the Products or Training Products component
+  if (!canSubmitProducts || !isTrainingComplete || !isApproved) {
+    return <Traningproducts />;
+  }
 
   return (
     <div className="w-full h-[800px] mx-auto mt-20 px-4 flex flex-col items-center">

@@ -42,11 +42,18 @@ const Producttoggle = () => {
   const handleToggle = async (userId, currentColorState) => {
     const newColorState = currentColorState === "green" ? "red" : "green";
     const canSubmitProducts = newColorState === "green";
-
+    const isTrainingComplete = canSubmitProducts; // Set based on your logic
+    const isApproved = canSubmitProducts;
     try {
       await axios.post(
         "https://backend-uhub.onrender.com/api/admin/toggle-product-user",
-        { userId, canSubmitProducts, colorState: newColorState },
+        {
+          userId,
+          canSubmitProducts,
+          colorState: newColorState,
+          isTrainingComplete,
+          isApproved,
+        },
         {
           headers: {
             Authorization: `Bearer ${token}`,
