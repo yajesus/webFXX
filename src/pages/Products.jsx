@@ -97,27 +97,11 @@ const Products = () => {
     }
 
     try {
-      console.log("Current Product:", currentProduct);
-      const isPremium = currentProduct.isPremium;
-      const approved = currentProduct.isApproved;
-
-      if (isPremium && !approved) {
-        setIsProductPendingApproval(true);
-        setSuccess(
-          "Congratulations, you have encountered a premium product. Contact customer service."
-        );
-        setError("");
-        return;
-      } else {
-        setIsProductPendingApproval(false);
-      }
-
       const response = await axios.post(
         `https://backend-uhub.onrender.com/api/user/submit-task`,
         {
           productId: currentProduct._id,
           userId,
-          productType: "user",
         },
         {
           headers: { Authorization: `Bearer ${token}` },

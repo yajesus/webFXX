@@ -20,6 +20,7 @@ const Usersdetail = () => {
             },
           }
         );
+        console.log(response.data);
         setUsers(response.data);
       } catch (err) {
         setError("Failed to fetch user details");
@@ -88,6 +89,9 @@ const Usersdetail = () => {
                   <th className="py-3 px-4 text-left">Wallet Address</th>
                   <th className="py-3 px-4 text-left">Invited Users</th>
                   <th className="py-3 px-4 text-left">Submitted Products</th>
+                  <th className="py-3 px-4 text-left">
+                    Submitted Training Products
+                  </th>
                 </tr>
               </thead>
               <tbody>
@@ -142,6 +146,11 @@ const Usersdetail = () => {
                     </td>
                     <td className="py-2 px-4 border-b">
                       {user.submittedProducts.length}
+                    </td>
+                    <td className="py-2 px-4 border-b">
+                      {user.submittedTrainingProducts == null
+                        ? 0
+                        : user.submittedTrainingProducts.length}
                     </td>
                   </tr>
                 ))}

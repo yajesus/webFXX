@@ -118,7 +118,7 @@ const Withdrawal = () => {
         </div>
         <div className="w-[60%] flex flex-col gap-8">
           <button className="w-full h-14 bg-blue-600 rounded-2xl text-white font-semibold text-2xl">
-            Fund
+            Fund's
           </button>
 
           {!withdrawalPending && (

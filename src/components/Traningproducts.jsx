@@ -66,11 +66,10 @@ const Traningproducts = () => {
     try {
       // Submit the task
       await axios.post(
-        `${apiUrl}/submit-task`,
+        `${apiUrl}/submitTrainingTask`,
         {
           productId: currentProduct._id,
           userId,
-          productType: "training",
         },
         {
           headers: { Authorization: `Bearer ${token}` },

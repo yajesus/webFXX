@@ -31,20 +31,26 @@ const Resetuser = () => {
 
   const handleReset = async (userId, action) => {
     try {
+      const canSubmitPremiumProducts = action === "reset"; // Reset = true, Unreset = false
+
       const response = await axios.post(
         "https://backend-uhub.onrender.com/api/admin/resetpremiumproduct",
-        { userId }
+        { userId, canSubmitPremiumProducts }
       );
+
       setSuccess(response.data.message);
       setError("");
 
-      // Optionally, re-fetch the users to update the UI
+      // Update the user status in the UI
       const updatedUsers = users.map((user) =>
-        user._id === userId
-          ? { ...user, canSubmitPremiumProducts: action === "reset" }
-          : user
+        user._id === userId ? { ...user, canSubmitPremiumProducts } : user
       );
       setUsers(updatedUsers);
+
+      // Clear the success message after 5 seconds
+      setTimeout(() => {
+        setSuccess("");
+      }, 5000);
     } catch (err) {
       setError("Error updating user status.");
       setSuccess("");
@@ -81,16 +87,16 @@ const Resetuser = () => {
                 <td className="py-2">{user.wallet}</td>
                 <td className="py-2">
                   <button
-                    onClick={() => handleReset(user._id, "reset")}
-                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mr-2"
+                    onClick={() => handleReset(user._id, "Unreset")}
+                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mr-2"
                   >
-                    Reset
+                    Unrest
                   </button>
                   <button
-                    onClick={() => handleReset(user._id, "unreset")}
-                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                    onClick={() => handleReset(user._id, "reset")}
+                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
                   >
-                    Unreset
+                    Reset
                   </button>
                 </td>
               </tr>

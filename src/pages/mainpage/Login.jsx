@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -9,42 +9,62 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { Link } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+
 const Login = ({ setIsLoggedIn }) => {
   const [identifier, setIdentifier] = useState("");
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false); // Loading state
+  const [rememberMe, setRememberMe] = useState(false); // Remember Me state
   const [eyeshow, setEyeshow] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
   const navigate = useNavigate();
   const { t, i18n } = useTranslation();
-  const apiUrl = process.env.REACT_APP_API_URL;
+
+  useEffect(() => {
+    // Check if a token is already stored
+    const token =
+      localStorage.getItem("token") || sessionStorage.getItem("token");
+    if (token) {
+      setIsLoggedIn(true);
+      navigate("/"); // Redirect to home if token exists
+    }
+  }, [navigate, setIsLoggedIn]);
+
   const handleLogin = async (e) => {
     e.preventDefault();
 
-    // Input validation
     if (!username || !password) {
       setError("Username/phonenumber and password are required");
-      setTimeout(() => setError(""), 3000); // Clear error after 3 seconds
+      setTimeout(() => setError(""), 3000);
       return;
     }
 
+    setLoading(true);
+
     try {
-      // API call for login
       const response = await axios.post(
         `https://backend-uhub.onrender.com/api/auth/login`,
         {
           identifier: username,
           password: password,
+          rememberMe: rememberMe, // Send rememberMe state to the backend
         }
       );
 
-      // Extract the user ID and token from the response
       const { userId, token } = response.data;
 
       if (userId && token) {
-        localStorage.setItem("userId", userId); // Store userId
-        localStorage.setItem("token", token); // Store token
+        // Store the token based on the "Remember Me" option
+        if (rememberMe) {
+          localStorage.setItem("userId", userId);
+          localStorage.setItem("token", token);
+        } else {
+          localStorage.setItem("userId", userId);
+          localStorage.setItem("token", token);
+        }
+
         setIsLoggedIn(true);
         navigate("/");
       } else {
@@ -52,7 +72,9 @@ const Login = ({ setIsLoggedIn }) => {
       }
     } catch (err) {
       setError(err.response.data.message || "Login Failed");
-      setTimeout(() => setError(""), 3000); // Clear error after 3 seconds
+      setTimeout(() => setError(""), 3000);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -66,13 +88,15 @@ const Login = ({ setIsLoggedIn }) => {
       passwordInput.type = "password";
     }
   };
+
   const handleLanguageChange = (language) => {
     i18n.changeLanguage(language);
-    setShowOptions(false); // Close the dropdown after selection
+    setShowOptions(false);
   };
+
   return (
     <main>
-      <div className="w-full h-full flex flex-col  items-center">
+      <div className="w-full h-full flex flex-col items-center">
         <div className="w-full flex justify-end absolute z-50 mt-5 -ml-5">
           <div className="flex items-center gap-1">
             <FontAwesomeIcon icon={faPhoneVolume} className="text-xl" />
@@ -83,7 +107,7 @@ const Login = ({ setIsLoggedIn }) => {
               {t("language")}
             </button>
             {showOptions && (
-              <ul className="absolute mt-10 bg-white border rounded shadow-lg ">
+              <ul className="absolute mt-10 bg-white border rounded shadow-lg">
                 <li
                   onClick={() => handleLanguageChange("en")}
                   className="cursor-pointer p-2 hover:bg-blue-100"
@@ -119,7 +143,7 @@ const Login = ({ setIsLoggedIn }) => {
             Contact Us
           </Link>
         </div>
-        <div className="w-[80%] md:w-[70%] lg:w-[30%] h-[400px] divsize rounded-md mt-10">
+        <div className="w-[80%] md:w-[70%] lg:w-[30%] h-[480px] divsize rounded-md mt-10">
           <div className="w-full flex justify-center">
             <p className="text-4xl text-blue-600 font-bold mt-6">
               {t("login")}
@@ -168,7 +192,31 @@ const Login = ({ setIsLoggedIn }) => {
                 </div>
               </div>
             </div>
+            <div className="w-full flex items-center ml-10">
+              <input
+                type="checkbox"
+                id="rememberMe"
+                className="mr-2"
+                checked={rememberMe}
+                onChange={() => setRememberMe(!rememberMe)}
+              />
+              <label htmlFor="rememberMe">{t("remember_me")}</label>
+            </div>
             {error && <div className="text-red-500 mt-2">{error}</div>}
+            {loading ? (
+              <div className="flex justify-center items-center">
+                <div className="w-8 h-8 border-4 border-blue-600 border-dashed rounded-full animate-spin"></div>
+              </div>
+            ) : (
+              <div className="w-full flex justify-center">
+                <button
+                  className="w-[80%] h-10 bg-blue-600 rounded-md text-white"
+                  type="submit"
+                >
+                  {t("login")}
+                </button>
+              </div>
+            )}
             <div className="w-full">
               <Link
                 className="ml-8 text-blue-600 cursor-pointer"
@@ -177,14 +225,6 @@ const Login = ({ setIsLoggedIn }) => {
                 {t("forgot_password")}
               </Link>
             </div>
-            <div className="w-full flex justify-center">
-              <button
-                className="w-[80%] h-10 bg-blue-600 rounded-md text-white"
-                type="submit"
-              >
-                {t("login")}
-              </button>
-            </div>
             <div className="w-full flex justify-center gap-2 mt-6">
               <p>{t("not_registered_yet")}</p>
               <Link className="text-blue-600 cursor-pointer" to="/Register">
@@ -192,26 +232,6 @@ const Login = ({ setIsLoggedIn }) => {
               </Link>
             </div>
           </form>
-        </div>
-        <div className="w-full flex mt-10">
-          <p className="ml-[150px]">{t("register_agreement")}</p>
-        </div>
-        <div className="w-full flex flex-col lg:flex-row justify-center  md:flex-row gap-5 items-center">
-          <img
-            src={`${process.env.PUBLIC_URL}/google.jpg`}
-            alt="Logo"
-            className="md:w-[200px] md:h-[150px] lg:w-[200px] lg:h-[150px] lg:ml-[250px] w-[400px] h-[250px]"
-          />
-          <img
-            src={`${process.env.PUBLIC_URL}/meta.jpg`}
-            alt="Logo"
-            className="w-[200px] h-[150px]"
-          />
-          <img
-            src={`${process.env.PUBLIC_URL}/shopify.jpg`}
-            alt="Logo"
-            className="w-[200px] h-[190px]"
-          />
         </div>
       </div>
     </main>

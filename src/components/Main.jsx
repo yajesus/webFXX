@@ -6,7 +6,7 @@ const Main = () => {
   return (
     <>
       <main>
-        <div className="w-full h-full  absolute  mt-20">
+        <div className="w-full h-[1300px] md:h-full absolute  mt-20">
           <div className="w-full  flex justify-center mt-9">
             <h1 className="font-bold text-4xl ">{t("welcome")}</h1>
           </div>
