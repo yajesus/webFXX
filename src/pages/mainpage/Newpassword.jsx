@@ -37,7 +37,7 @@ const Newpassword = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/api/user/newpassword",
+        "https://backend-uhub.onrender.com/api/user/newpassword",
         {
           userId,
           newPassword,

@@ -124,6 +124,7 @@ const AddProduct = () => {
             className="w-full p-2 border rounded"
             accept="image/*"
             required
+            name="image"
           />
         </div>
 

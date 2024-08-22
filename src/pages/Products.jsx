@@ -57,7 +57,7 @@ const Products = () => {
               headers: { Authorization: `Bearer ${token}` },
             }
           );
-
+          console.log(response.data);
           const allProducts = response.data;
 
           // Fetch remaining products for the specific user

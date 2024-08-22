@@ -65,7 +65,7 @@ const AllProducts = () => {
         {products.map((product) => (
           <div key={product._id} className="border p-4 rounded-md shadow-md">
             <img
-              src={product.image.replace(/\\/g, "/")}
+              src={`https://backend-uhub.onrender.com/${product.image}`}
               alt={product.name}
               className="w-full h-40 object-cover rounded-md mb-4"
             />

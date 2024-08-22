@@ -31,7 +31,7 @@ const Notifications = () => {
   const markAsRead = async (id) => {
     try {
       await axios.put(
-        "http://localhost:5000/api/user/mark-as-read",
+        "https://backend-uhub.onrender.com/api/user/mark-as-read",
         {
           notificationId: id,
         },

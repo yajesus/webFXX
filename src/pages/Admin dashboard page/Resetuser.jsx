@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-const Resetuser = () => {
+const ResetUser = () => {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
@@ -18,7 +18,6 @@ const Resetuser = () => {
             },
           }
         );
-        console.log(response.data);
         setUsers(response.data);
       } catch (err) {
         setError("Error fetching users.");
@@ -35,7 +34,12 @@ const Resetuser = () => {
 
       const response = await axios.post(
         "https://backend-uhub.onrender.com/api/admin/resetpremiumproduct",
-        { userId, canSubmitPremiumProducts }
+        { userId, canSubmitPremiumProducts },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
       );
 
       setSuccess(response.data.message);
@@ -87,16 +91,16 @@ const Resetuser = () => {
                 <td className="py-2">{user.wallet}</td>
                 <td className="py-2">
                   <button
-                    onClick={() => handleReset(user._id, "Unreset")}
-                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 mr-2"
-                  >
-                    Unrest
-                  </button>
-                  <button
                     onClick={() => handleReset(user._id, "reset")}
-                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600"
+                    className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 mr-2"
                   >
                     Reset
+                  </button>
+                  <button
+                    onClick={() => handleReset(user._id, "unreset")}
+                    className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
+                  >
+                    Unreset
                   </button>
                 </td>
               </tr>
@@ -110,4 +114,4 @@ const Resetuser = () => {
   );
 };
 
-export default Resetuser;
+export default ResetUser;

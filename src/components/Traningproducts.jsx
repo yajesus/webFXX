@@ -7,7 +7,7 @@ const Traningproducts = () => {
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [remainingProducts, setRemainingProducts] = useState(0);
-  const apiUrl = "https://backend-uhub.onrender.com";
+  const apiUrl = "http://localhost:5000/api/user";
   const userId = localStorage.getItem("userId");
   const token = localStorage.getItem("token");
 
@@ -45,8 +45,16 @@ const Traningproducts = () => {
         }
       );
       console.log(productsResponse.data);
-      // Assuming the API returns a list of products
-      setTrainingProducts(productsResponse.data);
+
+      if (productsResponse.data.message) {
+        // If the response contains a message, set the message and clear products
+        setError(productsResponse.data.message);
+        setTrainingProducts([]);
+      } else {
+        // Otherwise, set the products
+        setTrainingProducts(productsResponse.data);
+        setError(""); // Clear any previous error messages
+      }
     } catch (err) {
       setError("Error fetching training products");
       console.error(err);
@@ -158,7 +166,7 @@ const Traningproducts = () => {
               </p>
               {trainingProducts[currentProductIndex].image && (
                 <img
-                  src={`${apiUrl}/${trainingProducts[currentProductIndex].image}`}
+                  src={`https://backend-uhub.onrender.com${trainingProducts[currentProductIndex].image}`}
                   alt={trainingProducts[currentProductIndex].name}
                   className="w-full h-auto mt-3 rounded"
                 />
