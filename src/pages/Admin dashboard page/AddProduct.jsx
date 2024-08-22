@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const AddProduct = () => {
   const [name, setName] = useState("");
@@ -13,14 +14,18 @@ const AddProduct = () => {
   const [success, setSuccess] = useState("");
   const [allUsers, setAllUsers] = useState([]);
   const [selectedUsers, setSelectedUsers] = useState([]);
+  const [loading, setLoading] = useState(false); // Loading state
+  const navigate = useNavigate();
   const token = localStorage.getItem("adminToken");
+
   useEffect(() => {
     // Fetch all users on component mount
     const fetchUsers = async () => {
       try {
-        const response = await axios
-          .get("https://backend-uhub.onrender.com/users")
-          .then((response) => setAllUsers(response.data));
+        const response = await axios.get(
+          "https://backend-uhub.onrender.com/users"
+        );
+        setAllUsers(response.data);
       } catch (err) {
         console.error("Error fetching users:", err);
       }
@@ -37,8 +42,10 @@ const AddProduct = () => {
         : prevSelected.filter((id) => id !== value)
     );
   };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setLoading(true); // Start loading
 
     const formData = new FormData();
     formData.append("name", name);
@@ -70,8 +77,18 @@ const AddProduct = () => {
       setError(""); // Clear error if any
       console.log(response.data);
 
+      // Clear inputs
+      setName("");
+      setDescription("");
+      setPrice("");
+      setProfit("");
+      setIsPremium(false);
+      setImage(null);
+      setSelectedUsers([]);
+
       setTimeout(() => {
         setSuccess(""); // Clear success message after 5 seconds
+        navigate("/admin/dashboard"); // Redirect after 5 seconds
       }, 5000);
     } catch (err) {
       setError(
@@ -83,6 +100,7 @@ const AddProduct = () => {
 
       setTimeout(() => {
         setError(""); // Clear error message after 5 seconds
+        setLoading(false); // Stop loading
       }, 5000);
     }
   };
@@ -196,9 +214,14 @@ const AddProduct = () => {
 
         <button
           type="submit"
-          className="w-full p-2 bg-blue-600 text-white rounded"
+          className="w-full p-2 bg-blue-600 text-white rounded flex items-center justify-center"
+          disabled={loading} // Disable button when loading
         >
-          Add Product
+          {loading ? (
+            <div className="w-8 h-8 border-4 border-white-600 border-dashed rounded-full animate-spin"></div>
+          ) : (
+            "Add Product"
+          )}
         </button>
       </form>
     </div>

@@ -150,16 +150,14 @@ const Login = ({ setIsLoggedIn }) => {
             </p>
           </div>
           <form
-            className="w-full flex flex-col items-center mt-6 gap-3"
+            className="w-full flex flex-col items-center mt-6 gap-3 justify-center"
             onSubmit={handleLogin}
           >
             <div className="w-full flex flex-col">
-              <label className="md:ml-6 ml-8 lg:ml-8">
-                {t("username_phone")}
-              </label>
+              <label className="ml-8 lg:ml-8">{t("username_phone")}</label>
               <input
                 type="text"
-                className="w-[80%] h-10 divsize md:ml-6 ml-8 lg:ml-8 rounded-md p-4 focus:outline-blue-600"
+                className="w-[80%] h-10 divsize ml-8 lg:ml-8 rounded-md p-4 focus:outline-blue-600"
                 placeholder={t("username_phone")}
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
@@ -167,32 +165,24 @@ const Login = ({ setIsLoggedIn }) => {
             </div>
             <div className="w-full flex flex-col">
               <label className="ml-8">{t("password")}</label>
-              <div className="w-[full] flex flex-col justify-center items-center">
+              <div className="w-full flex items-center ml-8 lg:ml-8">
                 <input
                   type="password"
-                  className="w-[80%] h-10 divsize lg:-ml-4 md:-ml-12 rounded-md p-4 focus:outline-blue-600 showpassword"
-                  placeholder="Password"
+                  className="w-[80%] h-10 divsize rounded-md p-4 focus:outline-blue-600 showpassword"
+                  placeholder={t("password")}
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                 />
-                <div className="w-[80%] flex justify-end -mt-6 md:-ml-8">
+                <div className="-ml-10 cursor-pointer" onClick={showeye}>
                   {eyeshow ? (
-                    <FontAwesomeIcon
-                      icon={faEyeSlash}
-                      className="mr-5 cursor-pointer md:-ml-14"
-                      onClick={showeye}
-                    />
+                    <FontAwesomeIcon icon={faEyeSlash} />
                   ) : (
-                    <FontAwesomeIcon
-                      icon={faEye}
-                      className="mr-5 cursor-pointer"
-                      onClick={showeye}
-                    />
+                    <FontAwesomeIcon icon={faEye} />
                   )}
                 </div>
               </div>
             </div>
-            <div className="w-full flex items-center ml-10">
+            <div className="w-full flex items-center ml-20">
               <input
                 type="checkbox"
                 id="rememberMe"
@@ -208,9 +198,9 @@ const Login = ({ setIsLoggedIn }) => {
                 <div className="w-8 h-8 border-4 border-blue-600 border-dashed rounded-full animate-spin"></div>
               </div>
             ) : (
-              <div className="w-full flex justify-center">
+              <div className="w-full flex items-center">
                 <button
-                  className="w-[80%] h-10 bg-blue-600 rounded-md text-white"
+                  className="w-[80%] ml-8  h-10 bg-blue-600 rounded-md text-white"
                   type="submit"
                 >
                   {t("login")}

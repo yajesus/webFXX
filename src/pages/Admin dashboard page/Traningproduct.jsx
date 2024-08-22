@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import { useNavigate } from "react-router-dom";
 
 const Traningproduct = () => {
   const [name, setName] = useState("");
@@ -8,6 +9,7 @@ const Traningproduct = () => {
   const [price, setPrice] = useState("");
   const [message, setMessage] = useState("");
   const [error, setError] = useState("");
+  const navigate = useNavigate();
 
   const handleFileChange = (e) => {
     setImage(e.target.files[0]); // Set the selected file
@@ -39,6 +41,14 @@ const Traningproduct = () => {
       );
       setMessage(response.data.message);
       setError("");
+      setName("");
+      setDescription("");
+      setImage(null);
+      setPrice("");
+      // Set a timeout to clear the input fields and redirect after 5 seconds
+      setTimeout(() => {
+        navigate("/admin/dashboard");
+      }, 3000);
     } catch (err) {
       setMessage("");
       setError(err.response?.data?.message || "An error occurred");
